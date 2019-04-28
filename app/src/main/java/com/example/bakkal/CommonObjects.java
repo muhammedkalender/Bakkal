@@ -3,13 +3,47 @@ package com.example.bakkal;
 public class CommonObjects {
     static class Product {
         private String productImage, productName, productDescription;
-        private int productCategory;
+        private int productCategory, stock, id, count;
 
         public Product(String productName, String productDescription, String productCategory, String productImage) {
             this.productName = productName;
             this.productDescription = productDescription;
             this.productImage = productImage;
             this.productCategory = Integer.parseInt(productCategory);
+        }
+
+        public Product(String productName, String productDescription, String productCategory, String productImage, int stock) {
+            this.productName = productName;
+            this.productDescription = productDescription;
+            this.productImage = productImage;
+            this.productCategory = Integer.parseInt(productCategory);
+            setStock(stock);
+        }
+
+        public Product(String id, String productName, String productDescription, String productCategory, String productImage, int stock) {
+           this.id = Integer.parseInt(id);
+            this.productName = productName;
+            this.productDescription = productDescription;
+            this.productImage = productImage;
+            this.productCategory = Integer.parseInt(productCategory);
+            setStock(stock);
+        }
+
+        public int getCount() {
+            return count;
+        }
+
+        public void setCount(int count) {
+            //todo if(count > stock)
+            this.count = count;
+        }
+
+        public int getStock() {
+            return stock;
+        }
+
+        public void setStock(int stock) {
+            this.stock = stock;
         }
 
         public String getProductImage() {

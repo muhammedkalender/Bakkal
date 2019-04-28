@@ -7,36 +7,6 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 
-class ApiResult {
-    private boolean result;
-    private ArrayMap<String, String> resultData = new ArrayMap<>();
-
-    public void setResult(boolean result) {
-        this.result = result;
-    }
-
-    public String getResultData(String element) {
-        if (resultData.get(element) != null) {
-            return "";
-        } else {
-            return resultData.get(element);
-        }
-    }
-
-    public void setResultData(ArrayMap<String, String> resultData) {
-        this.resultData = resultData;
-    }
-
-    public boolean getResult() {
-        return this.result;
-    }
-
-    public void proccess(String webResult) {
-        //todo
-    }
-
-}
-
 public class API {
     static class Product {
         public static boolean post(String productName, String productDescription, int productCategory, String productImage) {
@@ -90,10 +60,13 @@ public class API {
                         JSONObject obj = arr.getJSONObject(i);
 
                         objs[i] = new CommonObjects.Product(
+                                result.getJSONData("product_id"),
                                 obj.getString("product_name"),
                                 result.getJSONData("product_description"),
                                 result.getJSONData("product_category"),
-                                result.getJSONData("product_image")
+                                result.getJSONData("product_image"),
+                                Integer.parseInt(result.getJSONData("product_stock"))
+
                         );
                     }
 
@@ -119,10 +92,12 @@ public class API {
 
             if (result.isConnected() && result.isSuccess()) {
                 return new CommonObjects.Product(
+                        result.getJSONData("product_id"),
                         result.getJSONData("product_name"),
                         result.getJSONData("product_description"),
                         result.getJSONData("product_category"),
-                        result.getJSONData("product_image")
+                        result.getJSONData("product_image"),
+                        Integer.parseInt(result.getJSONData("product_stock"))
                 );
             } else {
                 return null;
