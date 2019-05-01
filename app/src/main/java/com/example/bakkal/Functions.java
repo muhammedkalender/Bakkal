@@ -2,6 +2,7 @@ package com.example.bakkal;
 
 import android.os.StrictMode;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -61,7 +62,6 @@ public class Functions {
             } catch (Exception e) {
                 //Format yanlış
                 setSuccess(false);
-                setConnected(false);
                 this.data = "";
                 this.object = null;
             }
@@ -153,5 +153,44 @@ public class Functions {
         }
 
         return result.toString();
+    }
+
+    public static String getConfig(String name){
+        //todo
+        return getConfig(name, "");
+    }
+
+    public static int getConfig(String name, int value){
+        //todo
+        return value;
+    }
+
+    public static String getConfig(String name, String value){
+        //todo
+        return value;
+
+    }
+
+    public static boolean getConfig(String name, boolean value){
+        //todo
+        return value;
+
+    }
+
+    public static void setConfig(String name, boolean value){
+        //todo
+    }
+
+    public static void setConfig(String name, String value){
+        //todo
+    }
+
+    public static void setConfig(String name, int value){
+        //todo
+    }
+
+    public static boolean isOnline(){
+        //todo
+        return false;
     }
 }

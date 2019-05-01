@@ -5,6 +5,7 @@ import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -42,6 +43,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        HashMap<String, String> params = new HashMap<>();
+        params.put("method", "get");
+        params.put("cat", "user");
 
+        params.put("user_login", "test");
+        params.put("user_password", "123");
+
+        Functions.WebResult result = Functions.getData(params);
+
+        Toast.makeText(this, result.getData() + "", Toast.LENGTH_SHORT).show();
+        Log.e("aS", result.getData() + "");
+        if (result.isConnected() && result.isSuccess()) {
+            ((TextView) findViewById(R.id.text)).setText(result.getData() + "");
+
+        }else{
+            ((TextView) findViewById(R.id.text)).setText(result.getData() + "ddd");
+
+        }
     }
 }

@@ -15,6 +15,44 @@ public class User {
 
 
     public User() {
+        boolean isLogged = Functions.getConfig("is_logged", false);
+
+        if (isLogged) {
+            String token = Functions.getConfig("token_key");
+            String token_lock = Functions.getConfig("token_lock");
+
+            if (token != null && token_lock != null) {
+                if (Functions.isOnline()) {
+                    HashMap<String, String> params = new HashMap<>();
+                    params.put("method", "post");
+                    params.put("req", "login_check");
+
+                    params.put("token_key", Functions.getConfig("token_key"));
+                    params.put("token_lock", Functions.getConfig("token_lock"));
+
+                    Functions.WebResult result = Functions.getData(params);
+
+                    if (result.isConnected() && result.isSuccess()) {
+                        setId(Functions.getConfig("user_id", 0));
+                        setAdmin(Functions.getConfig("user_admin", false));
+                        setName(Functions.getConfig("user_name"));
+                        setSurname(Functions.getConfig("user_surname"));
+                        setAdress(Functions.getConfig("user_address"));
+                        setTokenKey(Functions.getConfig("token_key"));
+                        setTokenLock(Functions.getConfig("token_lock"));
+
+                        setLogged(true);
+                    } else {
+                        setLogged(false);
+                    }
+                } else {
+                    //todo network error ?
+                    setLogged(false);
+                }
+            } else {
+                setLogged(false);
+            }
+        }
         //todo is logged ? check firebase ? yada mysql
     }
 
@@ -42,7 +80,7 @@ public class User {
                 setTokenLock(user.getString("token_lock"));
 
                 setLogged(true);
-            }catch (Exception e){
+            } catch (Exception e) {
                 return false;
             }
 
@@ -53,7 +91,7 @@ public class User {
     }
 
     public static boolean logout() {
-        
+        return false;
     }
 
     public static boolean isLogged() {
@@ -62,6 +100,7 @@ public class User {
 
     public static void setLogged(boolean logged) {
         User.logged = logged;
+        Functions.setConfig("is_logged", logged);
     }
 
     public static boolean isAdmin() {
