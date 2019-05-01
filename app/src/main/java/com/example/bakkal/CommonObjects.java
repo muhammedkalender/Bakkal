@@ -1,7 +1,7 @@
 package com.example.bakkal;
 
 public class CommonObjects {
-    static class Product {
+    public static class Product {
         private String productImage, productName, productDescription;
         private int productCategory, stock, id, count;
 
@@ -76,6 +76,63 @@ public class CommonObjects {
 
         public void setProductName(String productName) {
             this.productName = productName;
+        }
+    }
+
+    public static class Category {
+        private String categoryName, categoryImage, categoryColor;
+        private int categoryId, categoryFather;
+
+        public Category(){
+
+        }
+
+        public Category(int categoryId, int categoryFather, String categoryName, String categoryImage, String categoryColor){
+            setCategoryId(categoryId);
+            setCategoryFather(categoryFather);
+            setCategoryName(categoryName);
+            setCategoryImage(categoryImage);
+            setCategoryColor(categoryColor);
+        }
+
+        public int getCategoryFather() {
+            return categoryFather;
+        }
+
+        public int getCategoryId() {
+            return categoryId;
+        }
+
+        public String getCategoryColor() {
+            return categoryColor;
+        }
+
+        public String getCategoryImage() {
+            return categoryImage;
+        }
+
+        public String getCategoryName() {
+            return categoryName;
+        }
+
+        public void setCategoryColor(String categoryColor) {
+            this.categoryColor = categoryColor;
+        }
+
+        public void setCategoryFather(int categoryFather) {
+            this.categoryFather = categoryFather;
+        }
+
+        public void setCategoryId(int categoryId) {
+            this.categoryId = categoryId;
+        }
+
+        public void setCategoryImage(String categoryImage) {
+            this.categoryImage = categoryImage;
+        }
+
+        public void setCategoryName(String categoryName) {
+            this.categoryName = categoryName;
         }
     }
 }

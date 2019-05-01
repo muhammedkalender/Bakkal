@@ -5,7 +5,9 @@ import android.util.ArrayMap;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class API {
     static class Product {
@@ -144,6 +146,158 @@ public class API {
             Functions.WebResult result = Functions.getData(params);
 
             if (result.isConnected() && result.isSuccess()) {
+                return true;
+            } else {
+                return true;
+            }
+        }
+    }
+
+    static class Category {
+        private static CommonObjects.Category[] categorises;
+
+        //Father Id 0 ise, Ana Kategori, değil ise alt kategori
+        //Açılışta belleğe alınacak, sonradan kullanılacak
+        public static boolean load() {
+            //TODO LOAD Again pu, felan varsa ?
+            //todo api call
+            HashMap<String, String> params = new HashMap<>();
+            params.put("method", "get");
+            params.put("cat", "category");
+
+            Functions.WebResult result = Functions.getData(params);
+
+            if (result.isConnected() && result.isSuccess()) {
+                try {
+                    JSONArray arr = new JSONArray(result.getData());
+
+                    categorises = new CommonObjects.Category[arr.length()];
+
+                    for (int i = 0; i < arr.length(); i++) {
+                        JSONObject obj = arr.getJSONObject(i);
+
+                        categorises[i] = new CommonObjects.Category(
+                                obj.getInt("category_id"),
+                                obj.getInt("category_father"),
+                                obj.getString("category_name"),
+                                obj.getString("category_image"),
+                                obj.getString("category_color")
+                        );
+                    }
+
+                    return true;
+                } catch (Exception e) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+
+        public static CommonObjects.Category[] gets() {
+            return gets(0);
+        }
+
+        public static CommonObjects.Category[] gets(int fatherId) {
+            if (categorises == null && load() == false) {
+                //todo
+                return null;
+            }
+
+            ArrayList<CommonObjects.Category> cats = new ArrayList<>();
+
+            for (CommonObjects.Category cat : categorises) {
+                if (cat.getCategoryFather() == fatherId) {
+                    cats.add(cat);
+                }
+            }
+
+            return (CommonObjects.Category[]) cats.toArray();
+        }
+
+        public static CommonObjects.Category get(int categoryId) {
+            for (int i = 0; i < categorises.length; i++) {
+                if (categorises[i].getCategoryId() == categoryId) {
+                    return categorises[i];
+                }
+            }
+
+            return null;
+        }
+
+        public static boolean put(int categoryId, int categoryFather, String categoryName, String categoryImage, String categoryColor) {
+
+            //todo image for upload olacka string değil
+//todo değişen varmı bak bi yoksa devam et
+
+
+            categoryName = Functions.clearAndEncodeData(categoryName);
+            categoryColor = Functions.clearAndEncodeData(categoryColor);
+
+            String imageURL = API.uploadImage(categoryImage);
+
+            HashMap<String, String> params = new HashMap<>();
+            params.put("method", "put");
+            params.put("cat", "category");
+
+            params.put("category_id", String.valueOf(categoryId));
+            params.put("category_name", categoryName);
+            params.put("category_father", String.valueOf(categoryFather));
+            params.put("category_color", categoryColor);
+            params.put("category_image", imageURL);
+
+            Functions.WebResult result = Functions.getData(params);
+
+            if (result.isConnected() && result.isSuccess()) {
+                API.Category.load();
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        public static boolean put(int categoryFather, String categoryName, String categoryImage, String categoryColor) {
+
+            //todo image for upload olacka string değil
+//todo değişen varmı bak bi yoksa devam et
+
+
+            categoryName = Functions.clearAndEncodeData(categoryName);
+            categoryColor = Functions.clearAndEncodeData(categoryColor);
+
+            String imageURL = API.uploadImage(categoryImage);
+
+            HashMap<String, String> params = new HashMap<>();
+            params.put("method", "put");
+            params.put("cat", "category");
+
+            params.put("category_name", categoryName);
+            params.put("category_father", String.valueOf(categoryFather));
+            params.put("category_color", categoryColor);
+            params.put("category_image", imageURL);
+
+            Functions.WebResult result = Functions.getData(params);
+
+            if (result.isConnected() && result.isSuccess()) {
+                API.Category.load();
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+
+        public static boolean delete(int categoryId) {
+            HashMap<String, String> params = new HashMap<>();
+            params.put("method", "delete");
+            params.put("cat", "category");
+
+            params.put("category_id", String.valueOf(categoryId));
+
+            Functions.WebResult result = Functions.getData(params);
+
+            if (result.isConnected() && result.isSuccess()) {
+                API.Category.load();
                 return true;
             } else {
                 return true;

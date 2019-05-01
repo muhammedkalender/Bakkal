@@ -99,6 +99,10 @@ public class Functions {
                     StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
 
+            params.put("token_key", MainActivity.user.getTokenKey());
+            params.put("token_lock", MainActivity.user.getTokenLock());
+
+
             String response = "";
             URL url = new URL(BASE_URL + "/api.php");
 

@@ -5,13 +5,13 @@ import org.json.JSONObject;
 import java.util.HashMap;
 
 public class User {
-    private static String tokenLock, tokenKey;
+    private String tokenLock, tokenKey;
 
-    private static boolean admin = false;
-    private static boolean logged = false;
+    private boolean admin = false;
+    private boolean logged = false;
 
-    private static int id;
-    private static String name, surname, adress;
+    private int id;
+    private String name, surname, adress, phone;
 
 
     public User() {
@@ -40,6 +40,7 @@ public class User {
                         setAdress(Functions.getConfig("user_address"));
                         setTokenKey(Functions.getConfig("token_key"));
                         setTokenLock(Functions.getConfig("token_lock"));
+                        setPhone("user_phone");
 
                         setLogged(true);
                     } else {
@@ -56,8 +57,12 @@ public class User {
         //todo is logged ? check firebase ? yada mysql
     }
 
+    public User(int userId){
+        //todo
+    }
 
-    public static boolean login(String username, String password) {
+
+    public boolean login(String username, String password) {
         HashMap<String, String> params = new HashMap<>();
         params.put("method", "get");
         params.put("cat", "user");
@@ -78,6 +83,7 @@ public class User {
                 setAdress(user.getString("user_address"));
                 setTokenKey(user.getString("token_key"));
                 setTokenLock(user.getString("token_lock"));
+                setPhone("user_phone");
 
                 setLogged(true);
             } catch (Exception e) {
@@ -90,73 +96,82 @@ public class User {
         }
     }
 
-    public static boolean logout() {
+    public  boolean logout() {
+        //todo
         return false;
     }
 
-    public static boolean isLogged() {
-        return logged;
+    public  boolean isLogged() {
+        return this.logged;
     }
 
-    public static void setLogged(boolean logged) {
-        User.logged = logged;
-        Functions.setConfig("is_logged", logged);
+    public  void setLogged(boolean logged) {
+        this.logged = logged;
+        Functions.setConfig("is_logged", this.logged);
     }
 
-    public static boolean isAdmin() {
+    public  boolean isAdmin() {
         return admin;
     }
 
-    public static void setAdmin(boolean admin) {
-        User.admin = admin;
+    public  void setAdmin(boolean admin) {
+        this.admin = admin;
     }
 
-    public static String getAdress() {
+    public  String getAdress() {
         return adress;
     }
 
-    public static void setAdress(String adress) {
-        User.adress = adress;
+    public  void setAdress(String adress) {
+        this.adress = adress;
     }
 
-    public static int getId() {
+    public  int getId() {
         return id;
     }
 
-    public static void setId(int id) {
-        User.id = id;
+    public  void setId(int id) {
+        this.id = id;
     }
 
 
-    public static void setName(String name) {
-        User.name = name;
+    public  void setName(String name) {
+        this.name = name;
     }
 
-    public static String getName() {
+    public  String getName() {
         return name;
     }
 
-    public static void setSurname(String surname) {
-        User.surname = surname;
+    public  void setSurname(String surname) {
+        this.surname = surname;
     }
 
-    public static String getSurname() {
+    public  String getSurname() {
         return surname;
     }
 
-    public static String getTokenKey() {
+    public  String getTokenKey() {
         return tokenKey;
     }
 
-    public static void setTokenKey(String tokenKey) {
-        User.tokenKey = tokenKey;
+    public void setTokenKey(String tokenKey) {
+        this.tokenKey = tokenKey;
     }
 
-    public static String getTokenLock() {
+    public  String getTokenLock() {
         return tokenLock;
     }
 
-    public static void setTokenLock(String tokenLock) {
-        User.tokenLock = tokenLock;
+    public  void setTokenLock(String tokenLock) {
+        this.tokenLock = tokenLock;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getPhone() {
+        return phone;
     }
 }

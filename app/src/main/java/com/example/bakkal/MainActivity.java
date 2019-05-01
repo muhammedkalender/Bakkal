@@ -5,16 +5,11 @@ import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.GridLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.HttpResponse;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,12 +33,23 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static User user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        HashMap<String, String> params = new HashMap<>();
+        user = new User();
+
+        for (int i = 0;i < 20; i++){
+
+            View x = getLayoutInflater().inflate(R.layout.category, null);
+
+            ((GridLayout)findViewById(R.id.glCategory)).addView(x);
+        }
+
+       /* HashMap<String, String> params = new HashMap<>();
         params.put("method", "get");
         params.put("cat", "user");
 
@@ -60,6 +66,6 @@ public class MainActivity extends AppCompatActivity {
         }else{
             ((TextView) findViewById(R.id.text)).setText(result.getData() + "ddd");
 
-        }
+        }*/
     }
 }
