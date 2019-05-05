@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".MainMenu"
+    tools:showIn="@layout/app_bar_main_menu">
+
+    <LinearLayout
+        android:id="@+id/llProduct"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/etProductSearch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/hint_search" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="searchProduct"
+                android:text="@string/search" />
+        </LinearLayout>
+
+
+        <ScrollView
+            android:id="@+id/svProduct"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <GridLayout
+                    android:id="@+id/glProduct"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:columnCount="@integer/column_count"
+                    android:rowCount="@integer/row_count">
+
+                </GridLayout>
+            </LinearLayout>
+        </ScrollView>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="loadMoreProduct"
+            android:text="@string/load_more_product" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llProductInfo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <ScrollView
+            android:id="@+id/svProductInfo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/ivProductInfoImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:scaleType="centerCrop" />
+
+                <TextView
+                    style="@style/input_pre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pre_product_brand" />
+
+                <EditText
+                    android:id="@+id/etProductInfoBrand"
+                    style="@style/input_obj"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:editable="false"
+                    android:text="@string/hint_product_brand" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/hr_height"
+                    android:background="@color/colorHR" />
+
+                <TextView
+                    style="@style/input_pre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pre_product_name" />
+
+                <EditText
+                    android:id="@+id/etProductInfoName"
+                    style="@style/input_obj"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:editable="false"
+                    android:text="@string/hint_product_name" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/hr_height"
+                    android:background="@color/colorHR" />
+
+                <TextView
+                    style="@style/input_pre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pre_product_weight" />
+
+                <EditText
+                    android:id="@+id/etProductInfoWeight"
+                    style="@style/input_obj"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:editable="false"
+                    android:text="@string/hint_product_weight" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/hr_height"
+                    android:background="@color/colorHR" />
+
+                <TextView
+                    style="@style/input_pre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pre_product_stock" />
+
+                <EditText
+                    android:id="@+id/etProductInfoStock"
+                    style="@style/input_obj"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:editable="false"
+                    android:text="@string/hint_product_stock" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/hr_height"
+                    android:background="@color/colorHR" />
+
+                <TextView
+                    style="@style/input_pre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pre_product_price" />
+
+                <EditText
+                    android:id="@+id/etProductInfoPrice"
+                    style="@style/input_obj"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:editable="false"
+                    android:text="@string/hint_product_price" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/hr_height"
+                    android:background="@color/colorHR" />
+
+                <TextView
+                    style="@style/input_pre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pre_product_desc" />
+
+                <EditText
+                    android:id="@+id/etProductInfoDesc"
+                    style="@style/input_obj"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:editable="false"
+                    android:lines="5"
+                    android:text="@string/hint_product_desc" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/hr_height"
+                    android:background="@color/colorHR" />
+            </LinearLayout>
+        </ScrollView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/input_pre"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/pre_product_info_stock" />
+
+            <EditText
+
+                android:id="@+id/pre_product_info_stock"
+                style="@style/input_obj"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_product_info_stock"
+                android:inputType="number"
+                android:text="1"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnProductInfoConfirm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/add_to_cart" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llShoppingCart"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <ScrollView
+            android:id="@+id/svShoppingCart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:id="@+id/llShoppingCartList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+
+            </LinearLayout>
+        </ScrollView>
+
+
+        <Button
+            android:id="@+id/btnCartConfirm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Siparişi Tammala - 128.68 ₺" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llOrder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ScrollView
+            android:id="@+id/svOrder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/llOrderList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"></LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
+</RelativeLayout>

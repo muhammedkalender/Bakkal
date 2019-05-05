@@ -3,6 +3,8 @@
     package="com.example.bakkal">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"
@@ -12,7 +14,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".ControlPanel"
+            android:label="@string/title_activity_control_panel"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".LoginOrRegister"
+            android:label="@string/title_activity_login_or_register"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".MainMenu"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -1,8 +1,27 @@
 package com.example.bakkal;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.StrictMode;
+import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.MenuItem;
+import android.view.SubMenu;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,13 +35,22 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class Functions {
-    public static final String BASE_URL = "http://192.168.64.2";
+    public static final String BASE_URL = "http://192.168.64.2/";
+    public static Context CONTEXT = null;
+    public static DecimalFormat decimalFormat = new DecimalFormat("#.##");
+
+    public static float two(float data) {
+        return Float.valueOf(decimalFormat.format(data));
+    }
 
     public static String clearAndEncodeData(String productName) {
         //todo
@@ -34,15 +62,64 @@ public class Functions {
         return "";
     }
 
+    public static void loadImage(final MenuItem menuItem, String categoryImage) {
+        try {
+            Glide.with(CONTEXT).load(categoryImage).addListener(new RequestListener<Drawable>() {
+                @Override
+                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                    return false;
+                    //todo
+                }
+
+                @Override
+                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                    menuItem.setIcon(resource);
+                    return false;
+                }
+            });
+        } catch (Exception e) {
+            Track.error("GLD-MI", e);
+        }
+    }
+
+    public static void loadImage(final ImageView object, String categoryImage) {
+        try {
+            Log.e("asdasd", categoryImage + "");
+
+            Glide.with(CONTEXT).load(categoryImage).into(object);
+
+           /* Glide.with(CONTEXT).load(categoryImage).addListener(new RequestListener<Drawable>() {
+                @Override
+                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                    Log.e("faaS","failll");
+                    return false;
+                    //todo
+                }
+
+                @Override
+                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                    Log.e("faaS","trwasd");
+
+                    object.setImageDrawable(resource);
+                    return false;
+                }
+            });*/
+        } catch (Exception e) {
+            Track.error("GLD-MI", e);
+        }
+    }
+
     static class WebResult {
         private boolean connected;
         private boolean success;
         private String data;
         private JSONObject object;
+        private JSONArray raw;
 
         public WebResult(boolean connected, boolean success, String data) {
             setConnected(connected);
             setSuccess(success);
+
             setData(data);
         }
 
@@ -59,12 +136,20 @@ public class Functions {
                 JSONArray result = new JSONArray(data);
                 setSuccess((boolean) result.get(0));
                 this.data = result.get(1).toString();
+                this.raw = result;
             } catch (Exception e) {
                 //Format yanlış
+                Track.error("GDSD", e);
+                Log.e("DATA", data + "22");
                 setSuccess(false);
                 this.data = "";
                 this.object = null;
+                this.raw = null;
             }
+        }
+
+        public JSONArray getRaw() {
+            return raw;
         }
 
         public String getData() {
@@ -99,13 +184,15 @@ public class Functions {
                     StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
 
-            params.put("token_key", MainActivity.user.getTokenKey());
-            params.put("token_lock", MainActivity.user.getTokenLock());
+            if (MainMenu.user == null) {
+                Log.e("asdasd", "null");
+            }
+            params.put("token_key", MainMenu.user.getTokenKey());
+            params.put("token_lock", MainMenu.user.getTokenLock());
 
 
             String response = "";
             URL url = new URL(BASE_URL + "/api.php");
-
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(15000);
             conn.setConnectTimeout(15000);
@@ -129,14 +216,16 @@ public class Functions {
                 while ((line = br.readLine()) != null) {
                     response += line;
                 }
-
+                Log.e("1sdsa", " iii");
                 return new WebResult(true, true, response);
             } else {
+                Log.e("1sdsa", " kötüüü");
+
                 return new WebResult(false, false, "");
             }
         } catch (Exception e) {
             //todo
-            Log.e("mesaj", e.getMessage() + "");
+            Log.e("mesajjj", e.toString() + "");
             return new WebResult(false, false, "");
         }
     }
@@ -159,42 +248,134 @@ public class Functions {
         return result.toString();
     }
 
-    public static String getConfig(String name){
-        //todo
+    public static String getConfig(String name) {
         return getConfig(name, "");
     }
 
-    public static int getConfig(String name, int value){
-        //todo
-        return value;
+    public static int getConfig(String name, int value) {
+        try {
+            SharedPreferences settings = CONTEXT.getSharedPreferences("bakkal", MODE_PRIVATE);
+            return settings.getInt(name, value);
+        } catch (Exception e) {
+            Track.error("GCI", e);
+            return value;
+        }
     }
 
-    public static String getConfig(String name, String value){
-        //todo
-        return value;
+    public static String getConfig(String name, String value) {
+        try {
+            SharedPreferences settings = CONTEXT.getSharedPreferences("bakkal", MODE_PRIVATE);
+            return settings.getString(name, value);
+        } catch (Exception e) {
+            Track.error("GCS", e);
+            return value;
+        }
 
     }
 
-    public static boolean getConfig(String name, boolean value){
-        //todo
-        return value;
-
+    public static boolean getConfig(String name, boolean value) {
+        try {
+            SharedPreferences settings = CONTEXT.getSharedPreferences("bakkal", MODE_PRIVATE);
+            return settings.getBoolean(name, value);
+        } catch (Exception e) {
+            Track.error("GCB", e);
+            return value;
+        }
     }
 
-    public static void setConfig(String name, boolean value){
-        //todo
+    public static void setConfig(String name, boolean value) {
+        try {
+            SharedPreferences preferences = CONTEXT.getSharedPreferences("bakkal", MODE_PRIVATE);
+            SharedPreferences.Editor edit = preferences.edit();
+
+            edit.putBoolean(name, value);
+            edit.apply();
+        } catch (Exception e) {
+            Track.error("SCB", e);
+        }
     }
 
-    public static void setConfig(String name, String value){
-        //todo
+    public static void setConfig(String name, String value) {
+        try {
+            SharedPreferences preferences = CONTEXT.getSharedPreferences("bakkal", MODE_PRIVATE);
+            SharedPreferences.Editor edit = preferences.edit();
+
+            edit.putString(name, value);
+            edit.apply();
+        } catch (Exception e) {
+            Track.error("SCS", e);
+        }
     }
 
-    public static void setConfig(String name, int value){
-        //todo
+    public static void setConfig(String name, int value) {
+        try {
+            SharedPreferences preferences = CONTEXT.getSharedPreferences("bakkal", MODE_PRIVATE);
+            SharedPreferences.Editor edit = preferences.edit();
+
+            edit.putInt(name, value);
+            edit.apply();
+        } catch (Exception e) {
+            Track.error("SCI", e);
+        }
     }
 
-    public static boolean isOnline(){
+    public static boolean isOnline() {
         //todo
-        return false;
+        return true;
+    }
+
+
+    public static void message(String title, String message, boolean isError) {
+        try {
+            if (title == null || title.equals("")) {
+                title = isError ? "Hata Mesajı" : "Durum Bilgisi";
+            }
+            new AlertDialog.Builder(CONTEXT)
+                    .setTitle(title)
+                    .setMessage(message)
+                    .setIcon(android.R.drawable.ic_dialog_alert).setNeutralButton("Tamam", null).show();
+
+        } catch (Exception e) {
+            Track.error("SHW_MSG", e);
+            //todo
+        }
+    }
+
+    public static void message(Context context, String title, String message, boolean isError) {
+        try {
+            if (title == null || title.equals("")) {
+                title = isError ? "Hata Mesajı" : "Durum Bilgisi";
+            }
+            new AlertDialog.Builder(context)
+                    .setTitle(title)
+                    .setMessage(message)
+                    .setIcon(android.R.drawable.ic_dialog_alert).setNeutralButton("Tamam", null).show();
+
+        } catch (Exception e) {
+            Track.error("SHW_MSG", e);
+            //todo
+        }
+    }
+
+    public static void message(Context context, String title, String message, boolean isError, DialogInterface.OnClickListener listener) {
+        try {
+            if (title == null || title.equals("")) {
+                title = isError ? "Hata Mesajı" : "Durum Bilgisi";
+            }
+            new AlertDialog.Builder(context)
+                    .setTitle(title)
+                    .setMessage(message)
+                    .setIcon(android.R.drawable.ic_dialog_alert).setNeutralButton("Tamam", listener).show();
+
+        } catch (Exception e) {
+            Track.error("SHW_MSG", e);
+            //todo
+        }
+    }
+
+    public static class Track {
+        public static void error(String name, Exception e) {
+            Log.e(name, e.getMessage() + "");
+        }
     }
 }

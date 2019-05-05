@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/ivCartItemImage"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:scaleType="fitXY" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvCartItemBrandNName"
+                style="@style/input_pre"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="BİM KRINKIL"
+                android:textSize="16sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <EditText
+                        android:inputType="numberDecimal"
+                        android:id="@+id/etCartItemCount"
+                        style="@style/input_obj"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="24.23" />
+
+                    <Button
+                        android:id="@+id/btnCartItemUpdate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/update" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvCartPriceNTotal"
+                    android:layout_weight="1"
+                    style="@style/input_pre"
+                    android:text="134.22 ₺ \n (12.24 ₺)"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnCartItemAction"
+            android:layout_width="80dp"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+</LinearLayout>

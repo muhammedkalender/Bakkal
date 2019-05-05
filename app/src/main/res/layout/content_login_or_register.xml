@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".LoginOrRegister"
+    tools:showIn="@layout/activity_login_or_register">
+
+    <LinearLayout
+        android:id="@+id/panelForgotPassword"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="60dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pre_register_email" />
+
+        <EditText
+            android:id="@+id/etForgotPasswordEmail"
+            style="@style/input_obj"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_register_email"
+            android:inputType="textEmailAddress" />
+
+        <Button
+            style="@style/button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="sendForgotMail"
+            android:text="@string/send_forgot_mail" />
+
+        <TextView
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="iWannaTry"
+            android:text="@string/i_wanna_try" />
+
+        <TextView
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="notAlreadyMember"
+            android:text="@string/not_already_member"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/panelLogin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="60dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <TextView
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pre_register_email" />
+
+        <EditText
+            android:id="@+id/etLoginEmail"
+            style="@style/input_obj"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_register_email"
+            android:inputType="textEmailAddress" />
+
+        <TextView
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pre_register_password" />
+
+        <EditText
+            android:id="@+id/etLoginPassword"
+            style="@style/input_obj"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_register_password"
+            android:inputType="textPassword" />
+
+
+        <Button
+            style="@style/button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="login"
+            android:text="@string/login" />
+
+        <TextView
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="forgotPassword"
+            android:text="@string/forgot_password" />
+
+        <TextView
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="notAlreadyMember"
+            android:text="@string/not_already_member"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/panelRegister"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="60dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <TextView
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pre_register_name" />
+
+        <EditText
+            android:id="@+id/etRegisterName"
+            style="@style/input_obj"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_register_name"
+            android:inputType="text" />
+
+
+        <TextView
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pre_register_surname" />
+
+        <EditText
+            android:id="@+id/etRegisterSurName"
+            style="@style/input_obj"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_register_surname"
+            android:inputType="text" />
+
+        <TextView
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pre_register_email" />
+
+        <EditText
+            android:id="@+id/etRegisterEmail"
+            style="@style/input_obj"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_register_email"
+            android:inputType="textEmailAddress" />
+
+        <TextView
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pre_register_password" />
+
+        <EditText
+            android:id="@+id/etRegisterPassword"
+            style="@style/input_obj"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_register_password"
+            android:inputType="textPassword" />
+
+        <TextView
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pre_register_password_repeat" />
+
+        <EditText
+            android:id="@+id/etRegisterPasswordRepeat"
+            style="@style/input_obj"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_register_password_repeat"
+            android:inputType="textPassword" />
+
+
+        <TextView
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pre_register_phone" />
+
+        <EditText
+            android:id="@+id/etRegisterPhone"
+            style="@style/input_obj"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_register_phone"
+            android:inputType="phone" />
+
+
+        <TextView
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pre_register_address" />
+
+        <EditText
+            android:id="@+id/etRegisterAddress"
+            style="@style/input_obj"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_register_address"
+            android:inputType="text" />
+
+        <Button
+            style="@style/button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="register"
+            android:text="@string/register" />
+
+        <TextView
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="forgotPassword"
+            android:text="@string/forgot_password" />
+
+        <TextView
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="alreadyMember"
+            android:text="@string/already_member"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

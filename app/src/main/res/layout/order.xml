@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+
+        <TextView
+            android:id="@+id/orderOrderNumber"
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="#12"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/orderOrderStatus"
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:text="Kargoda"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/orderOrderAmound"
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@id/btnShowOrderItem"
+            android:text="1234.55 ₺"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/btnShowOrderItem"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:id="@+id/svOrderItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/llOrderItemList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+        </LinearLayout>
+
+    </ScrollView>
+</LinearLayout>

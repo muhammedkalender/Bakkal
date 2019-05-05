@@ -14,4 +14,83 @@
     <string name="menu_tools">Tools</string>
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
+    <string name="title_activity_login_or_register">LoginOrRegister</string>
+
+    <string name="register">Kayıt Ol</string>
+    <string name="login">Giriş Yap</string>
+    <string name="forgot_password">Şifrenizimi Unuttunuz ?</string>
+    <string name="already_member">Zaten Üyemisiniz ?</string>
+    <string name="not_already_member">Hesabınız Yok Mu ?</string>
+    <string name="i_wanna_try">Şifrenizi Hatırladınız Mı ?</string>
+    <string name="send_forgot_mail">Kurmatma E-Postası Gönder</string>
+
+    <string name="pre_register_email">E-Posta Adresiniz</string>
+    <string name="hint_register_email">atakangunes@gmail.com</string>
+
+    <string name="pre_register_name">İsiminiz</string>
+    <string name="hint_register_name">Atakan</string>
+
+    <string name="pre_register_surname">Soy İsiminiz</string>
+    <string name="hint_register_surname">Güneş</string>
+
+    <string name="pre_register_password">Şifeniz</string>
+    <string name="hint_register_password">123456</string>
+
+    <string name="pre_register_password_repeat">Şifrenizin Tekrarı</string>
+    <string name="hint_register_password_repeat">123456</string>
+
+    <string name="pre_register_address">Adresiniz</string>
+    <string name="hint_register_address">Batı Mah. Pendik İstanbul</string>
+
+    <string name="pre_register_phone">Telefonunuz</string>
+    <string name="hint_register_phone">+90 555 555 5555</string>
+
+    <string name="null_email_or_password">E-Posta veya Şifre Boş</string>
+
+    <string name="connection_error">Sunucuya Bağlanılamadı</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_activity_main_menu">MainMenu</string>
+    <string name="admin_page">Yönetim Sayfası</string>
+    <string name="my_orders">Siparişlerim</string>
+    <string name="exit">Çıkış Yap</string>
+    <string name="my_account">Hesabım</string>
+    <string name="categorises">Kategoriler</string>
+
+    <string name="exit_ok">Çıkış Yapıldı</string>
+
+    <string name="visitor">Ziyaretçi</string>
+    <string name="category_all_of_them">Tüm Ürünler</string>
+
+    <string name="search">Ara</string>
+    <string name="hint_search">Sade Soda, Mentos, Ekmek, Salça</string>
+    <string name="load_more_product">Daha Fazla Ürün Yükle</string>
+    <string name="pre_product_info_stock">Sepete Eklenecek Adet</string>
+    <string name="hint_product_info_stock">1</string>
+    <string name="add_to_cart">Sepete Ekle</string>
+    <string name="product_brand">Marka</string>
+    <string name="pre_product_brand">Marka</string>
+    <string name="hint_product_brand">BİM</string>
+    <string name="hint_product_name">Krinkil</string>
+    <string name="pre_product_name">İsim</string>
+    <string name="pre_product_weight">Ağırlık</string>
+    <string name="hint_product_weight">500 gr</string>
+    <string name="hint_product_stock">500 Adet</string>
+    <string name="pre_product_stock">Mevcut Stok</string>
+    <string name="pre_product_price">Fiyat</string>
+    <string name="hint_product_price">2 ₺</string>
+    <string name="pre_product_desc">Açıklama</string>
+    <string name="hint_product_desc">Özel oalarak elde üretilmiştir</string>
+    <string name="null_cart">Sepetim</string>
+    <string name="full_cart">Sepetim (%1$d)</string>
+    <string name="update">Güncelle</string>
+    <string name="cart_confirm_button">Siparişi Tamamla (%1$.2f. ₺)</string>
+    <string name="more_than_stock">Stok Yeterli Değil</string>
+    <string name="confirm_disable">Sepet Boş</string>
+    <string name="delete">Sil</string>
+    <string name="status_shipped">Kargolandı</string>
+    <string name="status_completed">Tamamlandı</string>
+    <string name="status_confirmed">Onaylandı</string>
+    <string name="status_canceled">İptal Edildi</string>
+    <string name="status_ordered">Sipariş Edildi</string>
+    <string name="title_activity_control_panel">ControlPanel</string>
 </resources>

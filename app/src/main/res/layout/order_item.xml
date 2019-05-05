@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/orderItemBrandNName"
+            style="@style/input_pre"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="left|center_vertical"
+            android:lines="1"
+            android:maxLength="16"
+            android:text="BİM - KRILKIL UBUK KRAKTER" />
+
+        <TextView
+            android:id="@+id/orderItemPrice"
+            style="@style/input_pre"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/orderItemBrandNName"
+            android:layout_weight="1.2"
+            android:lines="1"
+            android:maxLength="16"
+            android:text="123. 76 ₺" />
+
+        <TextView
+            android:id="@+id/orderItemCount"
+            style="@style/input_pre"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/orderItemBrandNName"
+            android:layout_weight="1.3"
+            android:lines="1"
+            android:maxLength="16"
+            android:text="18" />
+
+        <TextView
+            android:id="@+id/orderItemTotal"
+            style="@style/input_pre"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/orderItemBrandNName"
+            android:layout_weight="1"
+            android:gravity="right|center_vertical"
+            android:maxLength="16"
+            android:lines="1"
+            android:text="1878.09 ₺8" />
+
+
+    </LinearLayout>
+</RelativeLayout>
