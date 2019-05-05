@@ -244,6 +244,47 @@ public class API {
             }
         }
 
+
+        public static CommonObjects.Category[] gets(boolean isReset) {
+            //TODO LOAD Again pu, felan varsa ?
+            //todo api call
+            HashMap<String, String> params = new HashMap<>();
+            params.put("req", "select");
+            params.put("cat", "category");
+            params.put("page", "0");
+            params.put("count", "0");
+            params.put("order", "category_name asc");
+
+            Functions.WebResult result = Functions.getData(params);
+
+            if (result.isConnected() && result.isSuccess()) {
+                try {
+                    JSONArray arr = result.getRaw().getJSONArray(2);
+
+                    CommonObjects.Category[] arrCategorises = new CommonObjects.Category[arr.length()];
+
+                    for (int i = 0; i < arr.length(); i++) {
+                        JSONObject obj = arr.getJSONObject(i);
+
+                        arrCategorises[i] = new CommonObjects.Category(
+                                obj.getInt("category_id"),
+                                obj.getInt("category_father"),
+                                obj.getString("category_name"),
+                                obj.getString("category_image"),
+                                obj.getString("category_color")
+                        );
+                    }
+
+                    return arrCategorises;
+                } catch (Exception e) {
+                    Functions.Track.error("API-CAT-FOR", e);
+                    return new CommonObjects.Category[0];
+                }
+            } else {
+                return new CommonObjects.Category[0];
+            }
+        }
+
         public static ArrayList<CommonObjects.Category> gets() {
             return gets(0);
         }

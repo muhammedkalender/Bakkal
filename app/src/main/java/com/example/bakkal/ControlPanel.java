@@ -32,8 +32,9 @@ public class ControlPanel extends AppCompatActivity {
     LinearLayout llCategory;
     EditText etCategory;
     ImageView ivCategory;
-    ArrayList<CommonObjects.Category> categories;
+    CommonObjects.Category[] categories;
     int selectedCategoryPosition = 0;
+    ArrayAdapter<String> spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,25 +75,20 @@ public class ControlPanel extends AppCompatActivity {
 
     public void loadCategory(View view) {
         try {
-            Log.e("asda", "xx51");
+            categories = API.Category.gets(true);
 
-            categories = API.Category.gets();
-
-            if (categories.size() == 0) {
+            if (categories.length == 0) {
                 //todo
             }
 
-            ArrayAdapter<String> spinner = (ArrayAdapter<String>) spinnerCategory.getAdapter();//
-
-            if (spinner == null){
-                spinner = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
-                spinner.setNotifyOnChange(true);
+            if (spinner == null) {
+                spinner = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
                 spinnerCategory.setAdapter(spinner);
                 spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                        etCategory.setText(categories.get(position).getCategoryName());
+                        etCategory.setText(categories[position].getCategoryName());
                         //Functions.loadImage(ivCategory, categories.get(position).getCategoryImage());
                         selectedCategoryPosition = position;
                         Toast.makeText(ControlPanel.this, position + "", Toast.LENGTH_SHORT).show();
@@ -105,16 +101,11 @@ public class ControlPanel extends AppCompatActivity {
                 });
             }
 
-spinner.clear();
-            spinner.notifyDataSetChanged();
+            spinner.clear();
 
-
-            for (int i = 0; i < categories.size(); i++) {
-                spinner.add(categories.get(i).getCategoryId() + " - " + categories.get(i).getCategoryName());
+            for (int i = 0; i < categories.length; i++) {
+                spinner.add(categories[i].getCategoryId() + " - " + categories[i].getCategoryName());
             }
-spinner.notifyDataSetChanged();
-
-            Log.e("asda", "xx3331");
 
             svMenu.setVisibility(View.INVISIBLE);
             Log.e("asda", "xx7771");
@@ -130,8 +121,10 @@ spinner.notifyDataSetChanged();
     public void addCategory(View view) {
         if (etCategory.getText() != null && etCategory.getText().toString().equals("") == false) {
             Functions.WebResult result = API.Category.insert(0, etCategory.getText().toString(), "", "");
-Log.e("asdds", etCategory.getText().toString()+"aa");
+            Log.e("asdds", etCategory.getText().toString() + "aa");
             if (result.isConnected() && result.isSuccess()) {
+                loadCategory(null);
+
                 Functions.message(this, "", result.getData(), false, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -148,13 +141,12 @@ Log.e("asdds", etCategory.getText().toString()+"aa");
         int pos = spinnerCategory.getSelectedItemPosition();
 
         if (etCategory.getText() != null && etCategory.getText().toString().equals("") == false) {
-            Functions.WebResult result = API.Category.delete(categories.get(pos).getCategoryId());
+            Functions.WebResult result = API.Category.delete(categories[pos].getCategoryId());
 
             if (result.isConnected() && result.isSuccess()) {
                 Functions.message(this, "", result.getData(), false, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        categories.remove(spinnerCategory.getSelectedItemPosition());
                         loadCategory(null);
                     }
                 });
@@ -165,23 +157,21 @@ Log.e("asdds", etCategory.getText().toString()+"aa");
     }
 
     public void saveCategory(View view) {
-        if (spinnerCategory.isSelected()) {
-            int pos = spinnerCategory.getSelectedItemPosition();
+        int pos = spinnerCategory.getSelectedItemPosition();
 
 
-            if (etCategory.getText() != null && etCategory.getText().toString().equals("") == false) {
-                Functions.WebResult result = API.Category.update(categories.get(pos).getCategoryId(), etCategory.getText().toString());
+        if (etCategory.getText() != null && etCategory.getText().toString().equals("") == false) {
+            Functions.WebResult result = API.Category.update(categories[pos].getCategoryId(), etCategory.getText().toString());
 
-                if (result.isConnected() && result.isSuccess()) {
-                    Functions.message(this, "", result.getData(), false, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            loadCategory(null);
-                        }
-                    });
-                } else {
-                    Functions.message(this, "", result.getData(), true);
-                }
+            if (result.isConnected() && result.isSuccess()) {
+                Functions.message(this, "", result.getData(), false, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        loadCategory(null);
+                    }
+                });
+            } else {
+                Functions.message(this, "", result.getData(), true);
             }
         }
     }
