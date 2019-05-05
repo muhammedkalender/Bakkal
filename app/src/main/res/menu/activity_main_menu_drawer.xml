@@ -9,7 +9,7 @@
 
     <group
         android:id="@+id/nav_menu_user"
-        android:checkableBehavior="single">
+       >
         <item
             android:id="@+id/nav_admin"
             android:icon="@drawable/ic_menu_camera"

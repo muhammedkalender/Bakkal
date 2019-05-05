@@ -183,7 +183,7 @@ public class CommonObjects {
         }
 
         public String getCategoryImage() {
-            return categoryImage;
+            return Functions.BASE_URL+ categoryImage;
         }
 
         public String getCategoryName() {
@@ -337,7 +337,7 @@ public class CommonObjects {
                     ((TextView) x.findViewById(R.id.orderItemBrandNName)).setText(orderItems.get(i) .getProduct().getProductBrand() + " - " + orderItems.get(i).getProduct().getProductName());
                     ((TextView) x.findViewById(R.id.orderItemCount)).setText(orderItems.get(i).getItemCount() + "");
                     ((TextView) x.findViewById(R.id.orderItemPrice)).setText(orderItems.get(i).getItemPrice() + "");
-                    ((TextView) x.findViewById(R.id.orderItemTotal)).setText(orderItems.get(i).getItemTotal() + "");
+                    ((TextView) x.findViewById(R.id.orderItemTotal)).setText(Functions.two(orderItems.get(i).getItemPrice() * orderItems.get(i).getItemCount()) + "");
 
                     list.addView(x);
                 }

@@ -93,4 +93,12 @@
     <string name="status_canceled">İptal Edildi</string>
     <string name="status_ordered">Sipariş Edildi</string>
     <string name="title_activity_control_panel">ControlPanel</string>
+    <string name="add_category">Kategori Oluştur</string>
+    <string name="selected_cat">Seçili Kategori</string>
+    <string name="pre_category_name">Kategori Adı</string>
+    <string name="hint_category_name">İçecekler</string>
+    <string name="pre_category_image">Kategori Resmi ( Seçmek için Tıkla )</string>
+    <string name="apply">Kaydet</string>
+    <string name="save">Ekle</string>
+    <string name="select_image">Resmi Seçiniz</string>
 </resources>

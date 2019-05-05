@@ -54,12 +54,12 @@ public class Functions {
 
     public static String clearAndEncodeData(String productName) {
         //todo
-        return "";
+        return productName;
     }
 
     public static String encodeData(String productDescription) {
         //todo
-        return "";
+        return productDescription;
     }
 
     public static void loadImage(final MenuItem menuItem, String categoryImage) {

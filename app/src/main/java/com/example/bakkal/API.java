@@ -306,7 +306,7 @@ public class API {
             }
         }
 
-        public static boolean put(int categoryFather, String categoryName, String categoryImage, String categoryColor) {
+        public static Functions.WebResult insert(int categoryFather, String categoryName, String categoryImage, String categoryColor) {
 
             //todo image for upload olacka string değil
 //todo değişen varmı bak bi yoksa devam et
@@ -318,40 +318,41 @@ public class API {
             String imageURL = API.uploadImage(categoryImage);
 
             HashMap<String, String> params = new HashMap<>();
-            params.put("method", "put");
+            params.put("req", "insert");
             params.put("cat", "category");
+
+            Log.e("catt", categoryName+"1");
 
             params.put("category_name", categoryName);
             params.put("category_father", String.valueOf(categoryFather));
             params.put("category_color", categoryColor);
             params.put("category_image", imageURL);
 
-            Functions.WebResult result = Functions.getData(params);
-
-            if (result.isConnected() && result.isSuccess()) {
-                API.Category.load();
-                return true;
-            } else {
-                return false;
-            }
+            return Functions.getData(params);
         }
 
 
-        public static boolean delete(int categoryId) {
+        public static Functions.WebResult delete(int categoryId) {
             HashMap<String, String> params = new HashMap<>();
-            params.put("method", "delete");
+            params.put("req", "delete");
             params.put("cat", "category");
 
             params.put("category_id", String.valueOf(categoryId));
 
-            Functions.WebResult result = Functions.getData(params);
+           return Functions.getData(params);
+        }
 
-            if (result.isConnected() && result.isSuccess()) {
-                API.Category.load();
-                return true;
-            } else {
-                return true;
-            }
+        public static Functions.WebResult update(int categoryId, String name) {
+            name = Functions.clearAndEncodeData(name);
+
+            HashMap<String, String> params = new HashMap<>();
+            params.put("req", "update");
+            params.put("cat", "category");
+
+            params.put("category_name", name);
+            params.put("category_id", String.valueOf(categoryId));
+
+            return Functions.getData(params);
         }
     }
 

@@ -67,6 +67,8 @@ public class MainMenu extends AppCompatActivity
     public static ScrollView svOrder;
     public static LinearLayout llOrderList;
 
+    private EditText etSearch;
+
     public static ArrayList<CommonObjects.OrderItem> shoppingCart = new ArrayList<>();
 
     public static void loadUser() {
@@ -192,7 +194,7 @@ public class MainMenu extends AppCompatActivity
             float cartTotal = 0;
 
             for (int i = 0; i < shoppingCart.size(); i++) {
-                cartTotal = shoppingCart.get(i).getItemCount() * shoppingCart.get(i).getProduct().getProductPrice();
+                cartTotal += shoppingCart.get(i).getItemCount() * shoppingCart.get(i).getProduct().getProductPrice();
             }
 
             btnCartConfirm.setText(Functions.CONTEXT.getString(R.string.cart_confirm_button, Functions.two(cartTotal)));
@@ -329,7 +331,7 @@ public class MainMenu extends AppCompatActivity
     public void loadOrder() {
         ArrayList<CommonObjects.Order> objs = API.Order.select(-1, 0, 0);
 
-        if (objs == null){
+        if (objs == null) {
             return;
         }
 
@@ -430,6 +432,8 @@ public class MainMenu extends AppCompatActivity
         llOrder = findViewById(R.id.llOrder);
         llOrderList = findViewById(R.id.llOrderList);
 
+        etSearch= findViewById(R.id.etProductSearch);
+
         svOrder = findViewById(R.id.svOrder);
 
         btnCartConfirm = findViewById(R.id.btnCartConfirm);
@@ -444,10 +448,11 @@ public class MainMenu extends AppCompatActivity
         listenerOrderItem = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.e("asdasd", "asasdas");
+
                 CommonObjects.Product obj = (CommonObjects.Product) v.getTag();
 
                 viewProduct(obj);
-                Log.e("asdasd", obj.getProductName());
             }
         };
 
@@ -487,6 +492,9 @@ public class MainMenu extends AppCompatActivity
                 llShoppingCart.setVisibility(View.INVISIBLE);
                 llProductInfo.setVisibility(View.INVISIBLE);
                 llProduct.setVisibility(View.VISIBLE);
+            } else if (etSearch.getText() != null && etSearch.getText().toString().equals("") == false) {
+                etSearch.setText("");
+                searchProduct(null);
             } else {
                 super.onBackPressed();
             }
@@ -541,6 +549,9 @@ public class MainMenu extends AppCompatActivity
                 break;
             case R.id.nav_orders:
                 loadOrder();
+                break;
+            case R.id.nav_admin:
+                startActivity(new Intent(MainMenu.this, ControlPanel.class));
                 break;
             default:
                 loadCategorises(item.getTitle().toString());
