@@ -101,4 +101,16 @@
     <string name="apply">Kaydet</string>
     <string name="save">Ekle</string>
     <string name="select_image">Resmi Seçiniz</string>
+    <string name="product_id">Ürün Numarası</string>
+    <string name="product_from_id">Ürünü Getir</string>
+    <string name="pre_product_image">Resim ( Yüklemek İçin Resim Bölgesine Tıklayın )</string>
+    <string name="pre_product_confirm">Onayla</string>
+    <string name="pre_product_delete">Sil</string>
+    <string name="add_product">Ürün Ekle</string>
+    <string name="edit_product">Ürün Düzenle</string>
+    <string name="confirm_delete">Silmek İstediğinize Eminmisiniz ?</string>
+    <string name="null_product">Önce Ürünü Çağırmalısınız</string>
+    <string name="choose_product">Ürün IDsi Boş Olamaz</string>
+    <string name="product_null">Ürün Getirilemedi</string>
+    <string name="error_product">Ürün Getirilirken Hatayla karşılaşıldı</string>
 </resources>

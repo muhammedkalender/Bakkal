@@ -502,7 +502,7 @@ function req($req, $cat)
                 $where = " AND order_status = " . intval($_POST["status"]);
             }
 
-            $stmt = $pdo->prepare("SELECT * FROM (SELECT * FROM orders" . $where . $page.") ords LEFT JOIN order_item USING(order_id) ORDER BY order_id DESC");
+            $stmt = $pdo->prepare("SELECT * FROM (SELECT * FROM orders" . $where . $page . ") ords LEFT JOIN order_item USING(order_id) ORDER BY order_id DESC");
 
             if ($stmt->execute()) {
                 return [true, "Siparişler Getirildi", $stmt->fetchAll()];
@@ -627,5 +627,46 @@ function req($req, $cat)
         } else {
             return [false, "İstek Düzğün Değil"];
         }
+    } else if ($cat == "all") {
+        if ($req == "upload_image") {
+            try {
+                if (!$isAdmin) {
+                    return [false, "Yetkiniz Yok"];
+                }
+
+                $result = arrayCheck([
+                        ["image", "Resim", 1, 0]
+                    ]
+                );
+
+                if (!$result[0]) {
+                    return $result;
+                }
+
+                $image = "images/" . md5(time()) . ".jpeg";
+
+                file_put_contents($image, base64_decode($_POST["image"]));
+
+                $imageInfo = getimagesize($image);
+
+                if ($imageInfo[0] < 128 || $imageInfo[0] > 521 || $imageInfo[1] < 128 || $imageInfo[1] > 521) {
+                    return [false, "Ürün resmi 128px den küçük veya 512 pxden büyük olamaz"];
+                }
+
+                if (!($imageInfo["mime"] == "image/jpeg" || $imageInfo["mime"] == "image/jpg" || $imageInfo["mime"] == "image/png")) {
+                    unset($image);
+                    return [false, "Ürün Resmi Uygun Formatta Değil"];
+                }
+
+
+                return [true, "Ürün Resmi Başarıyla Güncellendi", $image];
+            } catch (Exception $e) {
+                return [false, "Ürün Resmi Güncellenirken Sorunla Karşılaşıldı"];
+            }
+        } else {
+            //todo
+        }
+    } else {
+        //todo
     }
 }

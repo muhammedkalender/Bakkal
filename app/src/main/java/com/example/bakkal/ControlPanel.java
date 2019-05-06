@@ -3,6 +3,7 @@ package com.example.bakkal;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -25,6 +26,9 @@ import com.mvc.imagepicker.ImagePicker;
 import java.net.URI;
 import java.util.ArrayList;
 
+//TODO Ürünün ID sinden getirsin,  ekleme ayrı men olsun ( aynısı boş glai )
+//TODO ORder - bir statüden getirsin, 2 id den getirsin ( buton olsun, kullanıcı blgileri gelsin adres felan )
+
 public class ControlPanel extends AppCompatActivity {
 
     ScrollView svMenu;
@@ -35,6 +39,16 @@ public class ControlPanel extends AppCompatActivity {
     CommonObjects.Category[] categories;
     int selectedCategoryPosition = 0;
     ArrayAdapter<String> spinner;
+
+    boolean isProductImage = false;
+
+    LinearLayout llPageProduct, llProductEdit;
+    ScrollView svProduct;
+
+    EditText etProduct;
+    ImageView ivProduct;
+    String productImageUrl;
+    CommonObjects.Product currentProduct;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +66,14 @@ public class ControlPanel extends AppCompatActivity {
         etCategory = findViewById(R.id.etCategoryName);
 
         spinnerCategory = findViewById(R.id.spinCategory);
+
+        llPageProduct = findViewById(R.id.llAPProduct);
+        llProductEdit = findViewById(R.id.llAPProductGetter);
+        svProduct = findViewById(R.id.svAPProduct);
+
+        etProduct = findViewById(R.id.etProductID);
+
+        ivProduct = findViewById(R.id.ivProductInfoImage);
         // ivCategory = findViewById(R.id.ivCategoryImage);
 
        /* ivCategory.setOnClickListener(new View.OnClickListener() {
@@ -64,12 +86,30 @@ public class ControlPanel extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // Bitmap bitmap = ImagePicker.getImageFromResult(this, requestCode, resultCode, data);
-        String URL = ImagePicker.getImagePathFromResult(this, requestCode, resultCode, data);
+        try {
+            // Bitmap bitmap = ImagePicker.getImageFromResult(this, requestCode, resultCode, data);
+            String URL = ImagePicker.getImagePathFromResult(this, requestCode, resultCode, data);
 
-        if (URL != null && URL.equals("") == false) {
+            if (URL != null && URL.equals("") == false) {
+                Functions.WebResult result = API.Image(URL);
+
+                if (result.isConnected() && result.isSuccess()) {
+                    if (isProductImage) {
+
+                        Functions.loadImage(ivProduct, Functions.BASE_URL + result.getRaw().getString(2));
+                        productImageUrl = Functions.BASE_URL + result.getRaw().getString(2);
+                    }
+                } else {
+                    Functions.message(this, "", result.getData(), true);
+                }
+
+
+                Log.e("12312", URL);
+            }
+            // TODO do something with the bitmap
+        } catch (Exception e) {
+            Functions.Track.error("GI", e);
         }
-        // TODO do something with the bitmap
     }
 
 
@@ -174,5 +214,86 @@ public class ControlPanel extends AppCompatActivity {
                 Functions.message(this, "", result.getData(), true);
             }
         }
+    }
+
+    public void getProductFromId(View view) {
+        try {
+            if (etProduct.getText() == null || etProduct.getText().toString().equals("")) {
+                Functions.message(this, "", getString(R.string.choose_product), true);
+                return;
+            }
+
+            CommonObjects.Product x = API.Product.get(Integer.parseInt(etProduct.getText().toString()));
+
+            if (x == null) {
+                Functions.message(this, "", getString(R.string.product_null), true);
+                return;
+            } else {
+                ((EditText) findViewById(R.id.etProductInfoPrice)).setText(String.valueOf(Functions.two(x.getProductPrice())));
+                ((EditText) findViewById(R.id.etProductInfoStock)).setText(String.valueOf(Functions.two(x.getStock())));
+                ((EditText) findViewById(R.id.etProductInfoWeight)).setText(x.getPacketWeight());
+                ((EditText) findViewById(R.id.etProductInfoName)).setText(x.getProductName());
+                ((EditText) findViewById(R.id.etProductInfoBrand)).setText(x.getProductBrand());
+                ((EditText) findViewById(R.id.etProductInfoDesc)).setText(x.getProductDescription());
+
+                productImageUrl = Functions.BASE_URL + x.getProductImage();
+                currentProduct = x;
+                Functions.loadImage(ivProduct,  x.getProductImage());
+            }
+        } catch (Exception e) {
+            Functions.message(this, "", getString(R.string.error_product), true);
+            Functions.Track.error("GP-ERR", e);
+        }
+    }
+
+    public void productImage(View view) {
+        ImagePicker.pickImage(ControlPanel.this, getString(R.string.pick_image_intent_text));
+    }
+
+
+    public void addProduct(View view) {
+
+    }
+
+    public void editProduct(View view) {
+
+        ivProduct.setImageDrawable(null);
+
+        productImageUrl = "";
+
+        isProductImage = true;
+
+        svMenu.setVisibility(View.INVISIBLE);
+        llProductEdit.setVisibility(View.VISIBLE);
+        llPageProduct.setVisibility(View.VISIBLE);
+    }
+
+    public void deleteProduct(View view) {
+        try {
+            if (etProduct.getText() == null || etProduct.getText().toString().equals("")) {
+                Functions.message(this, "", getString(R.string.null_product), true);
+                return;
+            }
+
+            Functions.message(ControlPanel.this, "", getString(R.string.confirm_delete), false, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Functions.WebResult result = API.Product.delete(Integer.parseInt(etProduct.getText().toString()));
+                }
+            });
+        } catch (Exception e) {
+            Functions.Track.error("DP", e);
+        }
+    }
+
+    public void confirmProduct(View view) {
+        if(llProductEdit.getVisibility() == View.INVISIBLE){
+            //todo
+
+            addProduct();
+        }
+    }
+
+    private void addProduct(){
     }
 }

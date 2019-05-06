@@ -16,6 +16,27 @@ import java.util.HashMap;
 import java.util.List;
 
 public class API {
+    public static Functions.WebResult Image(String path) {
+        try {
+            Bitmap bm = BitmapFactory.decodeFile(path);
+            ByteArrayOutputStream bao = new ByteArrayOutputStream();
+            bm.compress(Bitmap.CompressFormat.JPEG, 90, bao);
+            byte[] ba = bao.toByteArray();
+            String base64 = Base64.encodeToString(ba, 0);
+
+            HashMap<String, String> params = new HashMap<>();
+            params.put("req", "upload_image");
+            params.put("cat", "all");
+
+            params.put("image", base64);
+
+            return Functions.getData(params);
+        } catch (Exception e) {
+            Functions.Track.error("UP-IM", e);
+            return new Functions.WebResult(false, false, "Sistemler Hata Oluştu");
+        }
+    }
+
     static class Product {
         public static boolean insert(String productBrand, String productName, String productDescription, int productCategory, String productImage, float productWeight, float productPrice) {
 
@@ -165,20 +186,14 @@ public class API {
             }
         }
 
-        public static boolean delete(int productId) {
+        public static Functions.WebResult delete(int productId) {
             HashMap<String, String> params = new HashMap<>();
             params.put("method", "delete");
             params.put("cat", "product");
 
             params.put("product_id", String.valueOf(productId));
 
-            Functions.WebResult result = Functions.getData(params);
-
-            if (result.isConnected() && result.isSuccess()) {
-                return true;
-            } else {
-                return true;
-            }
+            return Functions.getData(params);
         }
 
         public static Functions.WebResult uploadImage(int productId, String path) {
@@ -362,7 +377,7 @@ public class API {
             params.put("req", "insert");
             params.put("cat", "category");
 
-            Log.e("catt", categoryName+"1");
+            Log.e("catt", categoryName + "1");
 
             params.put("category_name", categoryName);
             params.put("category_father", String.valueOf(categoryFather));
@@ -380,7 +395,7 @@ public class API {
 
             params.put("category_id", String.valueOf(categoryId));
 
-           return Functions.getData(params);
+            return Functions.getData(params);
         }
 
         public static Functions.WebResult update(int categoryId, String name) {

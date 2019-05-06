@@ -9,8 +9,8 @@
     tools:showIn="@layout/activity_control_panel">
 
     <ScrollView
-        android:layout_width="match_parent"
         android:id="@+id/svMenu"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="visible">
 
@@ -22,9 +22,23 @@
 
             <Button
                 android:layout_width="120dp"
-                android:onClick="loadCategory"
                 android:layout_height="160dp"
+                android:onClick="loadCategory"
                 android:text="@string/add_category" />
+
+
+            <Button
+                android:layout_width="120dp"
+                android:layout_height="160dp"
+                android:onClick="addProduct"
+                android:text="@string/add_product" />
+
+
+            <Button
+                android:layout_width="120dp"
+                android:layout_height="160dp"
+                android:onClick="editProduct"
+                android:text="@string/edit_product" />
 
         </GridLayout>
     </ScrollView>
@@ -32,12 +46,12 @@
     <LinearLayout
         android:id="@+id/llAPCategory"
         android:layout_width="match_parent"
-        android:visibility="invisible"
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical"
         android:paddingLeft="60dp"
-        android:paddingRight="60dp">
+        android:paddingRight="60dp"
+        android:visibility="invisible">
 
         <TextView
             style="@style/input_pre"
@@ -69,12 +83,12 @@
             android:layout_height="wrap_content"
             android:text="@string/pre_category_image" />
 
-      <!--  <ImageView
-            android:id="@+id/ivCategoryImage"
-            android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:scaleType="fitCenter" />
--->
+        <!--  <ImageView
+              android:id="@+id/ivCategoryImage"
+              android:layout_width="match_parent"
+              android:layout_height="120dp"
+              android:scaleType="fitCenter" />
+  -->
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -93,5 +107,197 @@
             android:onClick="deleteCategory"
             android:text="@string/delete" />
 
+    </LinearLayout>
+
+    <LinearLayout
+        android:visibility="invisible"
+        android:id="@+id/llAPProduct"
+        android:layout_marginLeft="80dp"
+        android:layout_marginRight="80dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ScrollView
+
+            android:id="@+id/svAPProduct"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/llAPProductPanel"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:visibility="gone"
+                    android:id="@+id/llAPProductGetter"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/input_pre"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/product_id" />
+
+                    <EditText
+                        android:id="@+id/etProductID"
+                        style="@style/input_obj"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="getProductFromId"
+                        android:text="@string/product_from_id" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/input_pre"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pre_product_image" />
+
+
+                    <ImageView
+                        android:id="@+id/ivProductInfoImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:onClick="productImage"
+                        android:scaleType="centerCrop" />
+
+                    <TextView
+                        style="@style/input_pre"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pre_product_brand" />
+
+                    <EditText
+                        android:id="@+id/etProductInfoBrand"
+                        style="@style/input_obj"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hint_product_brand" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/hr_height"
+                        android:background="@color/colorHR" />
+
+                    <TextView
+                        style="@style/input_pre"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pre_product_name" />
+
+                    <EditText
+                        android:id="@+id/etProductInfoName"
+                        style="@style/input_obj"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hint_product_name" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/hr_height"
+                        android:background="@color/colorHR" />
+
+                    <TextView
+                        style="@style/input_pre"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pre_product_weight" />
+
+                    <EditText
+                        android:id="@+id/etProductInfoWeight"
+                        style="@style/input_obj"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hint_product_weight" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/hr_height"
+                        android:background="@color/colorHR" />
+
+                    <TextView
+                        style="@style/input_pre"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pre_product_stock" />
+
+                    <EditText
+                        android:id="@+id/etProductInfoStock"
+                        style="@style/input_obj"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hint_product_stock" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/hr_height"
+                        android:background="@color/colorHR" />
+
+                    <TextView
+                        style="@style/input_pre"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pre_product_price" />
+
+                    <EditText
+                        android:id="@+id/etProductInfoPrice"
+                        style="@style/input_obj"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hint_product_price" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/hr_height"
+                        android:background="@color/colorHR" />
+
+                    <TextView
+                        style="@style/input_pre"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pre_product_desc" />
+
+                    <EditText
+                        android:id="@+id/etProductInfoDesc"
+                        style="@style/input_obj"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:lines="5"
+                        android:text="@string/hint_product_desc" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/hr_height"
+                        android:background="@color/colorHR" />
+
+                    <Button
+                        android:onClick="confirmProduct"
+                        android:text="@string/pre_product_confirm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+
+                    <Button
+                        android:onClick="deleteProduct"
+                        android:text="@string/pre_product_delete"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
     </LinearLayout>
 </RelativeLayout>
