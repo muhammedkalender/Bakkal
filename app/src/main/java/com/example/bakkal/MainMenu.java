@@ -95,7 +95,7 @@ public class MainMenu extends AppCompatActivity
 
     public void viewProduct(CommonObjects.Product obj) {
         try {
-            Functions.loadImage((ImageView) findViewById(R.id.ivProductInfoImage), obj.getProductImage());
+            Functions.loadImage((ImageView) findViewById(R.id.ivProductInfoImage), Functions.BASE_URL+ obj.getProductImage());
 
             ((EditText) findViewById(R.id.etProductInfoBrand)).setText(obj.getProductBrand());
             ((EditText) findViewById(R.id.etProductInfoDesc)).setText(obj.getProductDescription());
@@ -108,6 +108,7 @@ public class MainMenu extends AppCompatActivity
             ((EditText) findViewById(R.id.etProductInfoPrice)).setText(String.valueOf(obj.getProductPrice()));
             ((EditText)findViewById(R.id.etProductInfoCategory)).setText(findCategory(obj.getProductCategory()));
             ((Button) findViewById(R.id.btnProductInfoConfirm)).setTag(obj);
+            ((EditText)findViewById(R.id.etProductInfoId)).setText(String.valueOf(obj.getId()));
             ((Button) findViewById(R.id.btnProductInfoConfirm)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

@@ -124,4 +124,6 @@
     <string name="must_choose_product">Öncelikle Ürün Seçilmeli</string>
     <string name="error_edit_add">Ürün Güncellenemedi</string>
     <string name="hint_product_category">İçecekler</string>
+    <string name="hint_product_id">10000</string>
+    <string name="pre_product_id">Ürün Numarası</string>
 </resources>

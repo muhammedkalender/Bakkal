@@ -104,7 +104,7 @@ public class CommonObjects {
         }
 
         public String getProductImage() {
-            return Functions.BASE_URL + productImage;
+            return productImage;
         }
 
         public String getProductDescription() {
@@ -144,7 +144,7 @@ public class CommonObjects {
                 ((Button) category.findViewById(R.id.btnProductView)).setTag(this);
                 ((Button) category.findViewById(R.id.btnProductView)).setOnClickListener(MainMenu.listenerOrderItem);
 
-                Functions.loadImage((ImageView) category.findViewById(R.id.ivProductImage), getProductImage());
+                Functions.loadImage((ImageView) category.findViewById(R.id.ivProductImage), Functions.BASE_URL+ getProductImage());
 
                 return category;
             } catch (Exception e) {

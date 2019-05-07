@@ -365,7 +365,7 @@ public class ControlPanel extends AppCompatActivity {
 
     private void resetEdit(int id) {
         try {
-            ((EditText) findViewById(R.id.etProductInfoDesc)).setText("");
+            ((EditText) findViewById(id)).setText("");
         } catch (Exception e) {
             Functions.Track.error("RE", e);
         }
@@ -443,6 +443,17 @@ public class ControlPanel extends AppCompatActivity {
 
             if (result.isConnected() && result.isSuccess()) {
                 Functions.message(this, "", result.getData(), true);
+
+                spinnerProductCategory.setSelection(0);
+                resetEdit(R.id.etProductInfoPrice);
+                resetEdit(R.id.etProductInfoWeight);
+                resetEdit(R.id.etProductInfoDesc);
+                resetEdit(R.id.etProductInfoName);
+                resetEdit(R.id.etProductInfoBrand);
+                resetEdit(R.id.etProductEditStock);
+                resetEdit(R.id.etProductInfoStock);
+
+                ivProduct.setImageDrawable(null);
             } else {
                 Functions.message(this, "", getString(R.string.error_add_product), true);
             }
@@ -530,6 +541,19 @@ public class ControlPanel extends AppCompatActivity {
         } catch (Exception e) {
             Functions.Track.error("DELLS", e);
             Functions.message(this, "", getString(R.string.error_stock), true);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(llCategory.getVisibility() == View.VISIBLE){
+            svMenu.setVisibility(View.VISIBLE);
+            llCategory.setVisibility(View.INVISIBLE);
+        }else if(llPageProduct.getVisibility() == View.VISIBLE){
+            svMenu.setVisibility(View.VISIBLE);
+            llPageProduct.setVisibility(View.INVISIBLE);
+        }else{
+            super.onBackPressed();
         }
     }
 }

@@ -266,7 +266,7 @@ function req($req, $cat)
                 return $result;
             }
 
-            $stmt = $pdo->prepare("UPDATE product SET product_brand = '" . clear($_POST["product_brand"]) . "', product_name ='" . clear($_POST["product_name"]) . "', product_desc = '" . clear($_POST["product_desc"]) . "', product_weight ='" . clear($_POST["product_weight"]) . "', product_price ='" . clear($_POST["product_price"]) . "', product_category = " . intval($_POST["product_category"]) . ", product_image = '".clear($_POST["product_image"])."' WHERE product_id = " . intval($_POST["product_id"]));
+            $stmt = $pdo->prepare("UPDATE product SET product_brand = '" . clear($_POST["product_brand"]) . "', product_name ='" . clear($_POST["product_name"]) . "', product_desc = '" . clear($_POST["product_desc"]) . "', product_weight ='" . clear($_POST["product_weight"]) . "', product_price ='" . clear($_POST["product_price"]) . "', product_category = " . intval($_POST["product_category"]) . ", product_image = '" . clear($_POST["product_image"]) . "' WHERE product_id = " . intval($_POST["product_id"]));
 
             if ($stmt->execute()) {
                 return [true, "Ürün Başarıyla Güncellendi", $pdo->lastInsertId()];
@@ -694,11 +694,13 @@ function req($req, $cat)
 
                 $imageInfo = getimagesize($image);
 
-                if ($imageInfo[0] < 128 || $imageInfo[0] > 521 || $imageInfo[1] < 128 || $imageInfo[1] > 521) {
-                    return [false, "Ürün resmi 128px den küçük veya 512 pxden büyük olamaz"];
+                if ($imageInfo[0] < 128 || $imageInfo[0] > 1024 || $imageInfo[1] < 128 || $imageInfo[1] > 1024) {
+                    return [false, "Ürün resmi 128px den küçük veya 1024 pxden büyük olamaz"];
                 }
 
-                if (!($imageInfo["mime"] == "image/jpeg" || $imageInfo["mime"] == "image/jpg" || $imageInfo["mime"] == "image/png")) {
+
+                //|| $imageInfo["mime"] == "image/png   "
+                if (!($imageInfo["mime"] == "image/jpeg" || $imageInfo["mime"] == "image/jpg")) {
                     unset($image);
                     return [false, "Ürün Resmi Uygun Formatta Değil"];
                 }
