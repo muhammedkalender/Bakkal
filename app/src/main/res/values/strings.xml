@@ -113,4 +113,15 @@
     <string name="choose_product">Ürün IDsi Boş Olamaz</string>
     <string name="product_null">Ürün Getirilemedi</string>
     <string name="error_product">Ürün Getirilirken Hatayla karşılaşıldı</string>
+    <string name="error_product_add">Ürün Eklenirken Sorun Oluştu</string>
+    <string name="pre_product_category">Kategori</string>
+    <string name="error_add_product">Ürün Eklenirken Hata Oluştu</string>
+    <string name="pre_product_edit_stock">Eklemek  / Silmek İstediğiniz Stok</string>
+    <string name="add_stock">Stok Ekle</string>
+    <string name="del_stock">Stok Sil</string>
+    <string name="error_stock">Stok Güncellenirken Hata Oluştu</string>
+    <string name="must_insert">Bir Değer Girilmeli</string>
+    <string name="must_choose_product">Öncelikle Ürün Seçilmeli</string>
+    <string name="error_edit_add">Ürün Güncellenemedi</string>
+    <string name="hint_product_category">İçecekler</string>
 </resources>

@@ -110,13 +110,13 @@
     </LinearLayout>
 
     <LinearLayout
-        android:visibility="invisible"
         android:id="@+id/llAPProduct"
-        android:layout_marginLeft="80dp"
-        android:layout_marginRight="80dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_marginLeft="80dp"
+        android:layout_marginRight="80dp"
+        android:orientation="vertical"
+        android:visibility="invisible">
 
         <ScrollView
 
@@ -131,11 +131,11 @@
                 android:orientation="vertical">
 
                 <LinearLayout
-                    android:visibility="gone"
                     android:id="@+id/llAPProductGetter"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
                     <TextView
                         style="@style/input_pre"
@@ -150,7 +150,7 @@
                         android:layout_height="wrap_content" />
 
                     <Button
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:onClick="getProductFromId"
                         android:text="@string/product_from_id" />
@@ -161,6 +161,17 @@
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:orientation="vertical">
+
+                    <TextView
+                        style="@style/input_pre"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pre_product_category" />
+
+                    <Spinner
+                        android:id="@+id/spinnerProductCateogry"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"></Spinner>
 
                     <TextView
                         style="@style/input_pre"
@@ -185,9 +196,10 @@
                     <EditText
                         android:id="@+id/etProductInfoBrand"
                         style="@style/input_obj"
+                        android:inputType="number"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/hint_product_brand" />
+                        android:hint="@string/hint_product_brand" />
 
                     <View
                         android:layout_width="match_parent"
@@ -205,7 +217,7 @@
                         style="@style/input_obj"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/hint_product_name" />
+                        android:hint="@string/hint_product_name" />
 
                     <View
                         android:layout_width="match_parent"
@@ -223,7 +235,7 @@
                         style="@style/input_obj"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/hint_product_weight" />
+                        android:hint="@string/hint_product_weight" />
 
                     <View
                         android:layout_width="match_parent"
@@ -240,8 +252,9 @@
                         android:id="@+id/etProductInfoStock"
                         style="@style/input_obj"
                         android:layout_width="match_parent"
+                        android:editable="false"
                         android:layout_height="wrap_content"
-                        android:text="@string/hint_product_stock" />
+                        android:hint="@string/hint_product_stock" />
 
                     <View
                         android:layout_width="match_parent"
@@ -257,9 +270,10 @@
                     <EditText
                         android:id="@+id/etProductInfoPrice"
                         style="@style/input_obj"
+                        android:inputType="numberDecimal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/hint_product_price" />
+                        android:hint="0.5" />
 
                     <View
                         android:layout_width="match_parent"
@@ -278,7 +292,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:lines="5"
-                        android:text="@string/hint_product_desc" />
+                        android:hint="@string/hint_product_desc" />
 
                     <View
                         android:layout_width="match_parent"
@@ -286,16 +300,55 @@
                         android:background="@color/colorHR" />
 
                     <Button
-                        android:onClick="confirmProduct"
-                        android:text="@string/pre_product_confirm"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:onClick="confirmProduct"
+                        android:text="@string/pre_product_confirm" />
 
                     <Button
-                        android:onClick="deleteProduct"
-                        android:text="@string/pre_product_delete"
+                        android:id="@+id/btnDeleteProduct"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:onClick="deleteProduct"
+                        android:text="@string/pre_product_delete" />
+
+                    <LinearLayout
+                        android:id="@+id/llProductStock"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/hr_height"
+                            android:background="@color/colorHR" />
+                        <TextView
+                            style="@style/input_pre"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/pre_product_edit_stock" />
+
+                        <EditText
+                            android:id="@+id/etProductEditStock"
+                            style="@style/input_obj"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"
+                            android:hint="@string/hint_product_stock" />
+
+                        <Button
+                            android:onClick="addStock"
+                            android:text="@string/add_stock"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                        <Button
+                            android:onClick="delStock"
+                            android:text="@string/del_stock"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>

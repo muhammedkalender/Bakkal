@@ -106,7 +106,7 @@ public class MainMenu extends AppCompatActivity
             ((EditText) findViewById(R.id.etProductInfoName)).setText(obj.getProductName());
             ((EditText) findViewById(R.id.etProductInfoWeight)).setText(obj.getPacketWeight());
             ((EditText) findViewById(R.id.etProductInfoPrice)).setText(String.valueOf(obj.getProductPrice()));
-
+            ((EditText)findViewById(R.id.etProductInfoCategory)).setText(findCategory(obj.getProductCategory()));
             ((Button) findViewById(R.id.btnProductInfoConfirm)).setTag(obj);
             ((Button) findViewById(R.id.btnProductInfoConfirm)).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -177,6 +177,16 @@ public class MainMenu extends AppCompatActivity
         } catch (Exception e) {
             Functions.Track.error("VP-MP", e);
         }
+    }
+
+    private String findCategory(int productCategory) {
+        for (int i = 0; i < categories.size();i++){
+            if(categories.get(i).getCategoryId() == productCategory){
+                return categories.get(i).getCategoryName();
+            }
+        }
+
+        return "";
     }
 
     public static void updateCartInfo() {

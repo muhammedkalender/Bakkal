@@ -32,23 +32,24 @@
 
 
             <TextView
-                android:background="@color/textBackground"
-
                 android:id="@+id/tvProductPrice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_above="@id/tvProductName"
+                android:background="@color/textBackground"
                 android:gravity="center"
+                android:maxLines="1"
                 android:text="5.99 $"
                 android:textStyle="bold" />
 
             <TextView
-                android:background="@color/textBackground"
                 android:id="@+id/tvProductName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
+                android:background="@color/textBackground"
                 android:gravity="center"
+                android:maxLines="1"
                 android:text="PRODUCT_NAME" />
         </RelativeLayout>
 

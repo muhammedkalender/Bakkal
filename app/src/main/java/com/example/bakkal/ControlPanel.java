@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -49,6 +50,9 @@ public class ControlPanel extends AppCompatActivity {
     ImageView ivProduct;
     String productImageUrl;
     CommonObjects.Product currentProduct;
+    Spinner spinnerProductCategory;
+    int selectedProductCategoryPosition = 0;
+    LinearLayout llProductStock;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +78,10 @@ public class ControlPanel extends AppCompatActivity {
         etProduct = findViewById(R.id.etProductID);
 
         ivProduct = findViewById(R.id.ivProductInfoImage);
+
+        spinnerProductCategory = findViewById(R.id.spinnerProductCateogry);
+
+        llProductStock = findViewById(R.id.llProductStock);
         // ivCategory = findViewById(R.id.ivCategoryImage);
 
        /* ivCategory.setOnClickListener(new View.OnClickListener() {
@@ -97,7 +105,7 @@ public class ControlPanel extends AppCompatActivity {
                     if (isProductImage) {
 
                         Functions.loadImage(ivProduct, Functions.BASE_URL + result.getRaw().getString(2));
-                        productImageUrl = Functions.BASE_URL + result.getRaw().getString(2);
+                        productImageUrl = result.getRaw().getString(2);
                     }
                 } else {
                     Functions.message(this, "", result.getData(), true);
@@ -235,15 +243,30 @@ public class ControlPanel extends AppCompatActivity {
                 ((EditText) findViewById(R.id.etProductInfoName)).setText(x.getProductName());
                 ((EditText) findViewById(R.id.etProductInfoBrand)).setText(x.getProductBrand());
                 ((EditText) findViewById(R.id.etProductInfoDesc)).setText(x.getProductDescription());
+                spinnerProductCategory.setSelection(findPosition(x.getProductCategory()));
 
-                productImageUrl = Functions.BASE_URL + x.getProductImage();
+                ((Button) findViewById(R.id.btnDeleteProduct)).setTag(x.getId());
+
+                Log.e("asdsadasd", findPosition(x.getProductCategory()) + "---" + x.getProductCategory());
+
+                productImageUrl =  x.getProductImage();
                 currentProduct = x;
-                Functions.loadImage(ivProduct,  x.getProductImage());
+                Functions.loadImage(ivProduct, x.getProductImage());
             }
         } catch (Exception e) {
             Functions.message(this, "", getString(R.string.error_product), true);
             Functions.Track.error("GP-ERR", e);
         }
+    }
+
+    private int findPosition(int productCategory) {
+        for (int i = 0; i < categories.length; i++) {
+            if (categories[i].getCategoryId() == productCategory) {
+                return i;
+            }
+        }
+
+        return 0;
     }
 
     public void productImage(View view) {
@@ -252,10 +275,7 @@ public class ControlPanel extends AppCompatActivity {
 
 
     public void addProduct(View view) {
-
-    }
-
-    public void editProduct(View view) {
+        currentProduct = null;
 
         ivProduct.setImageDrawable(null);
 
@@ -264,8 +284,49 @@ public class ControlPanel extends AppCompatActivity {
         isProductImage = true;
 
         svMenu.setVisibility(View.INVISIBLE);
+        llProductEdit.setVisibility(View.INVISIBLE);
+        llPageProduct.setVisibility(View.VISIBLE);
+        llProductStock.setVisibility(View.INVISIBLE);
+        ((Button) findViewById(R.id.btnDeleteProduct)).setVisibility(View.INVISIBLE);
+        updateCategorises();
+
+        spinnerProductCategory.setSelection(0);
+        resetEdit(R.id.etProductInfoPrice);
+        resetEdit(R.id.etProductInfoWeight);
+        resetEdit(R.id.etProductInfoDesc);
+        resetEdit(R.id.etProductInfoName);
+        resetEdit(R.id.etProductInfoBrand);
+        resetEdit(R.id.etProductEditStock);
+        resetEdit(R.id.etProductInfoStock);
+
+
+
+    }
+
+    public void editProduct(View view) {
+
+        currentProduct = null;
+        ivProduct.setImageDrawable(null);
+
+        productImageUrl = "";
+
+        isProductImage = true;
+        llProductStock.setVisibility(View.VISIBLE);
+
+        svMenu.setVisibility(View.INVISIBLE);
         llProductEdit.setVisibility(View.VISIBLE);
         llPageProduct.setVisibility(View.VISIBLE);
+        ((Button) findViewById(R.id.btnDeleteProduct)).setVisibility(View.VISIBLE);
+        updateCategorises();
+
+        spinnerProductCategory.setSelection(0);
+        resetEdit(R.id.etProductInfoPrice);
+        resetEdit(R.id.etProductInfoWeight);
+        resetEdit(R.id.etProductInfoDesc);
+        resetEdit(R.id.etProductInfoName);
+        resetEdit(R.id.etProductInfoBrand);
+        resetEdit(R.id.etProductInfoStock);
+        resetEdit(R.id.etProductEditStock);
     }
 
     public void deleteProduct(View view) {
@@ -279,6 +340,12 @@ public class ControlPanel extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     Functions.WebResult result = API.Product.delete(Integer.parseInt(etProduct.getText().toString()));
+
+                    if(result.isConnected() && result.isSuccess()){
+                        Functions.message(ControlPanel.this, "", result.getData(), false);
+                    }else{
+                        Functions.message(ControlPanel.this, "", result.getData(), true);
+                    }
                 }
             });
         } catch (Exception e) {
@@ -287,13 +354,182 @@ public class ControlPanel extends AppCompatActivity {
     }
 
     public void confirmProduct(View view) {
-        if(llProductEdit.getVisibility() == View.INVISIBLE){
+        if (llProductEdit.getVisibility() == View.INVISIBLE) {
             //todo
 
             addProduct();
+        }else{
+            editProduct();
         }
     }
 
-    private void addProduct(){
+    private void resetEdit(int id) {
+        try {
+            ((EditText) findViewById(R.id.etProductInfoDesc)).setText("");
+        } catch (Exception e) {
+            Functions.Track.error("RE", e);
+        }
+    }
+
+    private String editValue(int id) {
+        try {
+            return ((EditText) findViewById(id)).getText().toString();
+        } catch (Exception e) {
+            Functions.Track.error("EDV", e);
+            return "";
+        }
+    }
+
+    private void updateCategorises() {
+        categories = API.Category.gets(true);
+
+        if (categories.length == 0) {
+            //todo
+        }
+
+        if (spinner == null) {
+            spinner = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item);
+            spinnerCategory.setAdapter(spinner);
+            spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                    etCategory.setText(categories[position].getCategoryName());
+                    //Functions.loadImage(ivCategory, categories.get(position).getCategoryImage());
+                    selectedCategoryPosition = position;
+                    Toast.makeText(ControlPanel.this, position + "", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                    Toast.makeText(ControlPanel.this, "boşş", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        spinnerProductCategory.setAdapter(spinner);
+        spinnerProductCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                //Functions.loadImage(ivCategory, categories.get(position).getCategoryImage());
+                selectedProductCategoryPosition = position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                //todo
+            }
+        });
+
+
+        spinner.clear();
+
+        for (int i = 0; i < categories.length; i++) {
+            spinner.add(categories[i].getCategoryId() + " - " + categories[i].getCategoryName());
+        }
+    }
+
+    private void addProduct() {
+        try {
+            Functions.WebResult result = API.Product.insert(
+                    editValue(R.id.etProductInfoBrand),
+                    editValue(R.id.etProductInfoName),
+                    editValue(R.id.etProductInfoDesc),
+                    categories[selectedProductCategoryPosition].getCategoryId(),
+                    productImageUrl,
+                    editValue(R.id.etProductInfoWeight),
+                    Functions.two(Float.parseFloat(editValue(R.id.etProductInfoPrice))));
+
+            if (result.isConnected() && result.isSuccess()) {
+                Functions.message(this, "", result.getData(), true);
+            } else {
+                Functions.message(this, "", getString(R.string.error_add_product), true);
+            }
+        } catch (Exception e) {
+            Functions.Track.error("APP", e);
+            Functions.message(this, "", getString(R.string.error_product_add), true);
+        }
+    }
+
+
+
+    private void editProduct() {
+        try {
+            Functions.WebResult result = API.Product.update(
+                    currentProduct.getId(),
+                    editValue(R.id.etProductInfoBrand),
+                    editValue(R.id.etProductInfoName),
+                    editValue(R.id.etProductInfoDesc),
+                    categories[selectedProductCategoryPosition].getCategoryId(),
+                    productImageUrl,
+                    editValue(R.id.etProductInfoWeight),
+                    Functions.two(Float.parseFloat(editValue(R.id.etProductInfoPrice))));
+
+            if (result.isConnected() && result.isSuccess()) {
+                Functions.message(this, "", result.getData(), true);
+            } else {
+                Functions.message(this, "", result.getData(), true);
+            }
+        } catch (Exception e) {
+            Functions.Track.error("APP", e);
+            Functions.message(this, "", getString(R.string.error_edit_add), true);
+        }
+    }
+
+    public void addStock(View view) {
+        try {
+
+            if (currentProduct == null) {
+                Functions.message(this, "", getString(R.string.must_choose_product), true);
+                return;
+            }
+
+            if (editValue(R.id.etProductEditStock).equals("")) {
+                Functions.message(this, "", getString(R.string.must_insert), true);
+                return;
+            }
+
+            Functions.WebResult result = API.Product.addStock(currentProduct.getId(), Functions.two(Float.parseFloat(editValue(R.id.etProductEditStock))));
+
+            if (result.isConnected() && result.isSuccess()) {
+                Functions.message(this, "", result.getData(), false);
+                etProduct.setText(String.valueOf(currentProduct.getId()));
+                getProductFromId(null);
+            } else {
+                Functions.message(this, "", result.getData(), true);
+            }
+        } catch (Exception e) {
+            Functions.Track.error("ADDS", e);
+            Functions.message(this, "", getString(R.string.error_stock), true);
+        }
+    }
+
+    public void delStock(View view) {
+        try {
+
+            if (currentProduct == null) {
+                Functions.message(this, "", getString(R.string.must_choose_product), true);
+                return;
+            }
+
+            if (editValue(R.id.etProductEditStock).equals("")) {
+                Functions.message(this, "", getString(R.string.must_insert), true);
+                return;
+            }
+
+            Functions.WebResult result = API.Product.delStock(currentProduct.getId(), Functions.two(Float.parseFloat(editValue(R.id.etProductEditStock))));
+
+            if (result.isConnected() && result.isSuccess()) {
+                Functions.message(this, "", result.getData(), false);
+                etProduct.setText(String.valueOf(currentProduct.getId()));
+                getProductFromId(null);
+            } else {
+                Functions.message(this, "", result.getData(), true);
+            }
+        } catch (Exception e) {
+            Functions.Track.error("DELLS", e);
+            Functions.message(this, "", getString(R.string.error_stock), true);
+        }
     }
 }

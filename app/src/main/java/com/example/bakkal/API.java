@@ -38,14 +38,12 @@ public class API {
     }
 
     static class Product {
-        public static boolean insert(String productBrand, String productName, String productDescription, int productCategory, String productImage, float productWeight, float productPrice) {
+        public static Functions.WebResult insert(String productBrand, String productName, String productDescription, int productCategory, String productImage, String productWeight, float productPrice) {
 
             //todo image for upload olacka string değil
 
             productName = Functions.clearAndEncodeData(productName);
             productDescription = Functions.encodeData(productDescription);
-
-            String imageURL = API.uploadImage(productImage);
 
             HashMap<String, String> params = new HashMap<>();
             params.put("req", "insert");
@@ -55,17 +53,11 @@ public class API {
             params.put("product_name", productName);
             params.put("product_desc", productDescription);
             params.put("product_category", String.valueOf(productCategory));
-            params.put("product_image", imageURL);
-            params.put("product_weight", String.valueOf(productWeight));
+            params.put("product_image", productImage);
+            params.put("product_weight", productWeight);
             params.put("product_price", String.valueOf(productPrice));
 
-            Functions.WebResult result = Functions.getData(params);
-
-            if (result.isConnected() && result.isSuccess()) {
-                return true;
-            } else {
-                return false;
-            }
+            return Functions.getData(params);
         }
 
         public static CommonObjects.Product[] get(int category, int page, int count) {
@@ -188,7 +180,7 @@ public class API {
 
         public static Functions.WebResult delete(int productId) {
             HashMap<String, String> params = new HashMap<>();
-            params.put("method", "delete");
+            params.put("req", "delete");
             params.put("cat", "product");
 
             params.put("product_id", String.valueOf(productId));
@@ -209,6 +201,45 @@ public class API {
 
             params.put("product_id", String.valueOf(productId));
             params.put("product_image", base64);
+
+            return Functions.getData(params);
+        }
+
+        public static Functions.WebResult delStock(int id, float two) {
+            HashMap<String, String> params = new HashMap<>();
+            params.put("req", "del_stock");
+            params.put("cat", "product");
+
+            params.put("product_id", String.valueOf(id));
+            params.put("product_stock", String.valueOf(two));
+
+            return Functions.getData(params);
+        }
+
+        public static Functions.WebResult addStock(int id, float two) {
+            HashMap<String, String> params = new HashMap<>();
+            params.put("req", "add_stock");
+            params.put("cat", "product");
+
+            params.put("product_id", String.valueOf(id));
+            params.put("product_stock", String.valueOf(two));
+
+            return Functions.getData(params);
+        }
+
+        public static Functions.WebResult update(int productId, String productBrand, String productName, String productDescription, int productCategory, String productImage, String productWeight, float productPrice) {
+            HashMap<String, String> params = new HashMap<>();
+            params.put("req", "update");
+            params.put("cat", "product");
+
+            params.put("product_id", String.valueOf(productId));
+            params.put("product_brand", productBrand);
+            params.put("product_name", productName);
+            params.put("product_desc", productDescription);
+            params.put("product_category", String.valueOf(productCategory));
+            params.put("product_image", productImage);
+            params.put("product_weight", productWeight);
+            params.put("product_price", String.valueOf(productPrice));
 
             return Functions.getData(params);
         }

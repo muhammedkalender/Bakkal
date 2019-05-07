@@ -197,9 +197,53 @@ function req($req, $cat)
             $stmt = $pdo->prepare("INSERT INTO product(product_brand, product_name, product_desc, product_image, product_weight, product_price, product_category) VALUES ('" . clear($_POST["product_brand"]) . "', '" . clear($_POST["product_name"]) . "', '" . encode($_POST["product_desc"]) . "', '" . clear($_POST["product_image"]) . "', '" . clear($_POST["product_weight"]) . "', '" . clear($_POST["product_price"]) . "', " . intval($_POST["product_category"]) . ")");
 
             if ($stmt->execute()) {
-                return [true, "Ürün başarıyla ilgilendi", $pdo->lastInsertId()];
+                return [true, "Ürün başarıyla eklendi", $pdo->lastInsertId()];
             } else {
                 return [false, "Ürün Eklenirken Sorunla Karşılaşıldı"];
+            }
+        } else if ($req == "add_stock") {
+            if (!$isAdmin) {
+                return [false, "Yetkiniz Yok"];
+            }
+
+            $result = arrayCheck([
+                    ["product_id", "Ürün", 1, 32],
+                    ["product_stock", "Stok", 1, 0]
+                ]
+            );
+
+            if (!$result[0]) {
+                return $result;
+            }
+
+            $stmt = $pdo->prepare("UPDATE product SET product_stock = product_stock + " . clear($_POST["product_stock"]) . " WHERE product_id = " . intval($_POST["product_id"]));
+
+            if ($stmt->execute()) {
+                return [false, "Stok Güncellendi"];
+            } else {
+                return [false, "Stok Güncelelnemedi"];
+            }
+        } else if ($req == "del_stock") {
+            if (!$isAdmin) {
+                return [false, "Yetkiniz Yok"];
+            }
+
+            $result = arrayCheck([
+                    ["product_id", "Ürün", 1, 32],
+                    ["product_stock", "Stok", 1, 0]
+                ]
+            );
+
+            if (!$result[0]) {
+                return $result;
+            }
+
+            $stmt = $pdo->prepare("UPDATE product SET product_stock = product_stock - " . clear($_POST["product_stock"]) . " WHERE product_id = " . intval($_POST["product_id"]));
+
+            if ($stmt->execute()) {
+                return [false, "Stok Güncellendi"];
+            } else {
+                return [false, "Stok Güncelelnemedi"];
             }
         } else if ($req == "update") {
             if (!$isAdmin) {
@@ -213,7 +257,8 @@ function req($req, $cat)
                     ["product_id", "Ürün", 1, 32],
                     ["product_weight", "Ağırlık", 1, 32],
                     ["product_price", "Fiyat", 1, 32],
-                    ["product_category", "Kategori", 1, 8]
+                    ["product_category", "Kategori", 1, 8],
+                    ["product_image", "Resim", 0, 1024]
                 ]
             );
 
@@ -221,7 +266,7 @@ function req($req, $cat)
                 return $result;
             }
 
-            $stmt = $pdo->prepare("UPDATE product SET product_brand = '" . clear($_POST["product_brand"]) . "', product_name ='" . clear($_POST["product_name"]) . "', product_desc = '" . clear($_POST["product_desc"]) . "', product_weight ='" . clear($_POST["product_weight"]) . "', product_price ='" . clear($_POST["product_price"]) . "', product_category = " . intval($_POST["product_category"]) . " WHERE product_id = " . intval($_POST["product_id"]));
+            $stmt = $pdo->prepare("UPDATE product SET product_brand = '" . clear($_POST["product_brand"]) . "', product_name ='" . clear($_POST["product_name"]) . "', product_desc = '" . clear($_POST["product_desc"]) . "', product_weight ='" . clear($_POST["product_weight"]) . "', product_price ='" . clear($_POST["product_price"]) . "', product_category = " . intval($_POST["product_category"]) . ", product_image = '".clear($_POST["product_image"])."' WHERE product_id = " . intval($_POST["product_id"]));
 
             if ($stmt->execute()) {
                 return [true, "Ürün Başarıyla Güncellendi", $pdo->lastInsertId()];
@@ -275,7 +320,7 @@ function req($req, $cat)
             }
 
             $result = arrayCheck([
-                ["product_id", "Ürün", 3, 32]
+                ["product_id", "Ürün", 1, 32]
             ]);
 
             if (!$result[0]) {

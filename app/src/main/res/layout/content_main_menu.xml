@@ -131,6 +131,25 @@
                     style="@style/input_pre"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="@string/pre_product_category" />
+
+                <EditText
+                    android:id="@+id/etProductInfoCategory"
+                    style="@style/input_obj"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:editable="false"
+                    android:text="@string/hint_product_category" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/hr_height"
+                    android:background="@color/colorHR" />
+
+                <TextView
+                    style="@style/input_pre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="@string/pre_product_weight" />
 
                 <EditText
