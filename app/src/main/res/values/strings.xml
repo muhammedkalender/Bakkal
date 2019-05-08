@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">bakkal</string>
-    <string name="title_activity_main_page">MainPage</string>
+    <string name="app_name">Güneş Bakkal</string>
+    <string name="title_activity_main_page">Ana Sayfa</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -14,7 +14,7 @@
     <string name="menu_tools">Tools</string>
     <string name="menu_share">Share</string>
     <string name="menu_send">Send</string>
-    <string name="title_activity_login_or_register">LoginOrRegister</string>
+    <string name="title_activity_login_or_register">Kullanıcı İşlemleri</string>
 
     <string name="register">Kayıt Ol</string>
     <string name="login">Giriş Yap</string>
@@ -92,7 +92,7 @@
     <string name="status_confirmed">Onaylandı</string>
     <string name="status_canceled">İptal Edildi</string>
     <string name="status_ordered">Sipariş Edildi</string>
-    <string name="title_activity_control_panel">ControlPanel</string>
+    <string name="title_activity_control_panel">Yönetim Paneli</string>
     <string name="add_category">Kategori Oluştur</string>
     <string name="selected_cat">Seçili Kategori</string>
     <string name="pre_category_name">Kategori Adı</string>
@@ -126,4 +126,36 @@
     <string name="hint_product_category">İçecekler</string>
     <string name="hint_product_id">10000</string>
     <string name="pre_product_id">Ürün Numarası</string>
+    <string name="buy_them">Sepete Ekle</string>
+    <string name="view_them">İncele</string>
+    <string name="update_user_info">Güncelle</string>
+    <string name="update_password">Şifre Değiştir</string>
+    <string name="update_user_password">Şifre Değiştir</string>
+    <string name="match_password">Şifreler Uyuşmuyor</string>
+    <string name="null_password">Şifre ve Tekrarı Girmelisiniz</string>
+    <string name="editOrder">Sipariş Görüntüle</string>
+    <string name="get_from_statues">Statüden Getir</string>
+    <string name="get_order">Siparişleri Getir</string>
+    <string name="get_from_order_id">Numaradan Sipariş Getir</string>
+
+    <string-array name="order_status">
+        <item>Sipariş Edildi</item>
+        <item>Onaylandı</item>
+        <item>Kargolandı</item>
+        <item>Tamamlandı</item>
+        <item>İptal Edildi</item>
+    </string-array>
+
+    <string name="user_info_title">Kullanıcı Bilgileri</string>
+    <string name="user_info">İsim Soyisim : %1$s %2$s\nTelefon : %3$s\nAdres : %4$s</string>
+    <string name="set_statue">Durumu Güncelle\n(Güncellemek için Yuvarlaklı Kutucuğa Tıkla)</string>
+    <string name="set_statue_button">Güncelle</string>
+    <string name="allow_stock">Geçerli Bir Değer Girmelisiniz</string>
+    <string name="found_user">Kullanıcı Bulunamadı</string>
+    <string name="null_category">Kategoriler Getirilemedi</string>
+    <string name="null_order">Sipariş Bulunamadı</string>
+    <string name="null_order_id">Geçerli Bir ID Giriniz</string>
+    <string name="null_order_statue">İlgili Filtrelemede Sipariş Bulunamadı</string>
+    <string name="cart_null">Sepet Boş</string>
+    <string name="online">Bu uygulamayı kullanabilmek için internete bağlı olmanız gerekiyor</string>
 </resources>

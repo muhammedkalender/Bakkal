@@ -29,6 +29,7 @@
                 android:hint="@string/hint_search" />
 
             <Button
+                style="@style/button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="searchProduct"
@@ -59,6 +60,7 @@
         </ScrollView>
 
         <Button
+            style="@style/button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:onClick="loadMoreProduct"
@@ -271,6 +273,7 @@
 
         <Button
             android:id="@+id/btnProductInfoConfirm"
+            style="@style/button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/add_to_cart" />
@@ -302,6 +305,7 @@
 
         <Button
             android:id="@+id/btnCartConfirm"
+            style="@style/button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Siparişi Tammala - 128.68 ₺" />
@@ -309,10 +313,10 @@
 
     <LinearLayout
         android:id="@+id/llOrder"
-        android:visibility="invisible"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="invisible">
 
         <ScrollView
             android:id="@+id/svOrder"
@@ -327,4 +331,152 @@
         </ScrollView>
 
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llUserPanel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <TextView
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pre_register_email" />
+
+        <EditText
+            android:id="@+id/etRegisterEmail"
+            style="@style/input_obj"
+            android:layout_width="match_parent"
+            android:editable="false"
+
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_register_email"
+            android:inputType="textEmailAddress" />
+
+
+        <TextView
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pre_register_name" />
+
+        <EditText
+            android:id="@+id/etRegisterName"
+            style="@style/input_obj"
+            android:editable="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_register_name"
+            android:inputType="text" />
+
+
+        <TextView
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pre_register_surname" />
+
+        <EditText
+            android:id="@+id/etRegisterSurName"
+            style="@style/input_obj"
+            android:editable="false"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_register_surname"
+            android:inputType="text" />
+
+
+        <TextView
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pre_register_phone" />
+
+        <EditText
+            android:id="@+id/etRegisterPhone"
+            style="@style/input_obj"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_register_phone"
+            android:inputType="phone" />
+
+
+        <TextView
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pre_register_address" />
+
+        <EditText
+            android:id="@+id/etRegisterAddress"
+            style="@style/input_obj"
+            android:layout_width="match_parent"
+            android:editable="false"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_register_address"
+            android:inputType="text" />
+
+        <Button
+            style="@style/button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="updateUserInfo"
+            android:text="@string/update_user_info" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/hr_height"
+            android:background="@color/colorHR" />
+
+        <TextView
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/update_password" />
+
+        <TextView
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pre_register_password" />
+
+        <EditText
+            android:id="@+id/etRegisterPassword"
+            style="@style/input_obj"
+            android:editable="false"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_register_password"
+            android:inputType="textPassword" />
+
+        <TextView
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pre_register_password_repeat" />
+
+        <EditText
+            android:id="@+id/etRegisterPasswordRepeat"
+            style="@style/input_obj"
+            android:layout_width="match_parent"
+            android:editable="false"
+
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_register_password_repeat"
+            android:inputType="textPassword" />
+
+        <Button
+            style="@style/button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="updatePassword"
+            android:text="@string/update_user_password" />
+    </LinearLayout>
+
+
 </RelativeLayout>

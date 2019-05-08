@@ -1,5 +1,6 @@
 package com.example.bakkal;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -27,9 +28,6 @@ import com.mvc.imagepicker.ImagePicker;
 import java.net.URI;
 import java.util.ArrayList;
 
-//TODO Ürünün ID sinden getirsin,  ekleme ayrı men olsun ( aynısı boş glai )
-//TODO ORder - bir statüden getirsin, 2 id den getirsin ( buton olsun, kullanıcı blgileri gelsin adres felan )
-
 public class ControlPanel extends AppCompatActivity {
 
     ScrollView svMenu;
@@ -54,6 +52,16 @@ public class ControlPanel extends AppCompatActivity {
     int selectedProductCategoryPosition = 0;
     LinearLayout llProductStock;
 
+    LinearLayout llOrder;
+    LinearLayout llOrderContent;
+    static LinearLayout llOrderlist;
+    ScrollView svOrder;
+    static Spinner spinnerStatue;
+    public static Spinner spinnerSetStatue;
+    int orderPage = 0;
+
+    public static Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,10 +69,7 @@ public class ControlPanel extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Log.e("asda", "xx1");
-
         svMenu = findViewById(R.id.svMenu);
-        Log.e("asda", "xx2");
 
         llCategory = findViewById(R.id.llAPCategory);
         etCategory = findViewById(R.id.etCategoryName);
@@ -82,6 +87,15 @@ public class ControlPanel extends AppCompatActivity {
         spinnerProductCategory = findViewById(R.id.spinnerProductCateogry);
 
         llProductStock = findViewById(R.id.llProductStock);
+
+        llOrder = findViewById(R.id.llAPOrder);
+        llOrderContent = findViewById(R.id.llAPContent);
+        svOrder = findViewById(R.id.svAPOrder);
+        llOrderlist = findViewById(R.id.llAPList);
+        spinnerStatue = findViewById(R.id.spinOrderStatus);
+
+        spinnerSetStatue = findViewById(R.id.spinOrderSetStatus);
+        context = this;
         // ivCategory = findViewById(R.id.ivCategoryImage);
 
        /* ivCategory.setOnClickListener(new View.OnClickListener() {
@@ -95,7 +109,6 @@ public class ControlPanel extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         try {
-            // Bitmap bitmap = ImagePicker.getImageFromResult(this, requestCode, resultCode, data);
             String URL = ImagePicker.getImagePathFromResult(this, requestCode, resultCode, data);
 
             if (URL != null && URL.equals("") == false) {
@@ -110,11 +123,7 @@ public class ControlPanel extends AppCompatActivity {
                 } else {
                     Functions.message(this, "", result.getData(), true);
                 }
-
-
-                Log.e("12312", URL);
             }
-            // TODO do something with the bitmap
         } catch (Exception e) {
             Functions.Track.error("GI", e);
         }
@@ -126,7 +135,8 @@ public class ControlPanel extends AppCompatActivity {
             categories = API.Category.gets(true);
 
             if (categories.length == 0) {
-                //todo
+                Functions.message(ControlPanel.context, "", getString(R.string.null_category), true);
+                return;
             }
 
             if (spinner == null) {
@@ -249,9 +259,9 @@ public class ControlPanel extends AppCompatActivity {
 
                 Log.e("asdsadasd", findPosition(x.getProductCategory()) + "---" + x.getProductCategory());
 
-                productImageUrl =  x.getProductImage();
+                productImageUrl = x.getProductImage();
                 currentProduct = x;
-                Functions.loadImage(ivProduct, x.getProductImage());
+                Functions.loadImage(ivProduct, Functions.BASE_URL + x.getProductImage());
             }
         } catch (Exception e) {
             Functions.message(this, "", getString(R.string.error_product), true);
@@ -298,13 +308,9 @@ public class ControlPanel extends AppCompatActivity {
         resetEdit(R.id.etProductInfoBrand);
         resetEdit(R.id.etProductEditStock);
         resetEdit(R.id.etProductInfoStock);
-
-
-
     }
 
     public void editProduct(View view) {
-
         currentProduct = null;
         ivProduct.setImageDrawable(null);
 
@@ -341,9 +347,9 @@ public class ControlPanel extends AppCompatActivity {
                 public void onClick(DialogInterface dialog, int which) {
                     Functions.WebResult result = API.Product.delete(Integer.parseInt(etProduct.getText().toString()));
 
-                    if(result.isConnected() && result.isSuccess()){
+                    if (result.isConnected() && result.isSuccess()) {
                         Functions.message(ControlPanel.this, "", result.getData(), false);
-                    }else{
+                    } else {
                         Functions.message(ControlPanel.this, "", result.getData(), true);
                     }
                 }
@@ -355,10 +361,8 @@ public class ControlPanel extends AppCompatActivity {
 
     public void confirmProduct(View view) {
         if (llProductEdit.getVisibility() == View.INVISIBLE) {
-            //todo
-
             addProduct();
-        }else{
+        } else {
             editProduct();
         }
     }
@@ -384,7 +388,8 @@ public class ControlPanel extends AppCompatActivity {
         categories = API.Category.gets(true);
 
         if (categories.length == 0) {
-            //todo
+            Functions.message(context, "", getString(R.string.null_category), true);
+
         }
 
         if (spinner == null) {
@@ -418,7 +423,7 @@ public class ControlPanel extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                //todo
+
             }
         });
 
@@ -464,7 +469,6 @@ public class ControlPanel extends AppCompatActivity {
     }
 
 
-
     private void editProduct() {
         try {
             Functions.WebResult result = API.Product.update(
@@ -478,7 +482,7 @@ public class ControlPanel extends AppCompatActivity {
                     Functions.two(Float.parseFloat(editValue(R.id.etProductInfoPrice))));
 
             if (result.isConnected() && result.isSuccess()) {
-                Functions.message(this, "", result.getData(), true);
+                Functions.message(this, "", result.getData(), false);
             } else {
                 Functions.message(this, "", result.getData(), true);
             }
@@ -546,14 +550,69 @@ public class ControlPanel extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(llCategory.getVisibility() == View.VISIBLE){
+        if (llCategory.getVisibility() == View.VISIBLE) {
             svMenu.setVisibility(View.VISIBLE);
             llCategory.setVisibility(View.INVISIBLE);
-        }else if(llPageProduct.getVisibility() == View.VISIBLE){
+        } else if (llPageProduct.getVisibility() == View.VISIBLE) {
             svMenu.setVisibility(View.VISIBLE);
             llPageProduct.setVisibility(View.INVISIBLE);
-        }else{
+        } else {
             super.onBackPressed();
         }
+    }
+
+    public void editOrder(View view) {
+        svMenu.setVisibility(View.INVISIBLE);
+        llOrder.setVisibility(View.VISIBLE);
+    }
+
+    public static void ordersFromStatue(View view) {
+        ArrayList<CommonObjects.Order> objs = API.Order.select(spinnerStatue.getSelectedItemPosition(), 0, 0);
+
+        llOrderlist.removeAllViews();
+
+        if (objs == null) {
+            Functions.message(context, "", ControlPanel.context.getString(R.string.null_order_statue), true);
+            return;
+        }
+
+        for (int i = 0; i < objs.size(); i++) {
+            View x = objs.get(i).getView();
+
+            objs.get(i).showUserButton();
+            objs.get(i).showUpdateButton();
+
+
+            if (x != null) {
+                llOrderlist.addView(x);
+            }
+        }
+    }
+
+    public void orderFromId(View view) {
+        if (editValue(R.id.etOrder).equals("")) {
+            Functions.message(context, "", getString(R.string.null_order_id), true);
+            return;
+        }
+
+        CommonObjects.Order obj = API.Order.get(Integer.parseInt(editValue(R.id.etOrder)), MainMenu.user.isAdmin());
+
+        llOrderlist.removeAllViews();
+
+        if (obj == null) {
+            Functions.message(context, "", getString(R.string.null_order), true);
+            return;
+        }
+
+        View x = obj.getView();
+        obj.showUserButton();
+        obj.showUpdateButton();
+
+        if (x == null) {
+            Functions.message(context, "", getString(R.string.null_order), true);
+            return;
+        }
+
+        llOrderlist.addView(x);
     }
 }

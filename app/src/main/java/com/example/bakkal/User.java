@@ -15,13 +15,9 @@ public class User {
     private int id;
     private String name, surname, address, phone, email;
 
-    public User() {
-        //todo
-    }
-
     public void load() {
         boolean isLogged = Functions.getConfig("is_logged", false);
-        Log.e("asdas", isLogged ? "tr" : "fl");
+
         if (isLogged) {
             String token = Functions.getConfig("token_key");
             String token_lock = Functions.getConfig("token_lock");
@@ -37,7 +33,6 @@ public class User {
                     setTokenLock(Functions.getConfig("token_lock"));
                     // params.put("token_key", Functions.getConfig("token_key"));
                     //params.put("token_lock", Functions.getConfig("token_lock"));
-                    Log.e("sadasd", Functions.getConfig("token_key") + "----" + Functions.getConfig("token_lock"));
                     Functions.WebResult result = Functions.getData(params);
 
                     if (result.isConnected() && result.isSuccess()) {
@@ -48,13 +43,11 @@ public class User {
                         setAddress(Functions.getConfig("user_address"));
                         setTokenKey(Functions.getConfig("token_key"));
                         setTokenLock(Functions.getConfig("token_lock"));
-                        setPhone("user_phone");
+                        setPhone(Functions.getConfig("user_phone"));
                         setEmail(Functions.getConfig("user_email"));
 
                         setLogged(true);
                     } else {
-                        Log.e("asdas", "aa1");
-                        Log.e("asdasdsa", result.getData());
                         setLogged(false);
                     }
                 } else {
@@ -69,11 +62,6 @@ public class User {
                 setLogged(false);
             }
         }
-        //todo is logged ? check firebase ? yada mysql
-    }
-
-    public User(int userId) {
-        //todo
     }
 
     public Functions.WebResult register(String name, String surname, String email, String password, String passwordRepeat, String address, String phone) {
@@ -89,6 +77,32 @@ public class User {
         params.put("user_email", email);
         params.put("user_password", password);
         params.put("user_password_repeat", passwordRepeat);
+
+        return Functions.getData(params);
+    }
+
+    public Functions.WebResult update(String name, String surname,  String address, String phone) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("req", "update_user");
+        params.put("cat", "user");
+
+
+        params.put("user_name", name);
+        params.put("user_surname", surname);
+        params.put("user_address", address);
+        params.put("user_phone", phone);
+        params.put("user_id", String.valueOf(getId()));
+
+        return Functions.getData(params);
+    }
+
+    public  Functions.WebResult changePassword(String password) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("req", "update_password");
+        params.put("cat", "user");
+
+        params.put("user_id", String.valueOf(getId()));
+        params.put("user_password", String.valueOf(password));
 
         return Functions.getData(params);
     }
@@ -130,10 +144,6 @@ public class User {
         }
     }
 
-    public boolean logout() {
-        //todo
-        return false;
-    }
 
     public boolean isLogged() {
         return this.logged;
@@ -141,7 +151,6 @@ public class User {
 
     public void setLogged(boolean logged) {
         this.logged = logged;
-        Log.e("asda", "değişiö" + (logged ? "tr" : "fl"));
         Functions.setConfig("is_logged", this.logged);
     }
 

@@ -7,6 +7,7 @@
     <LinearLayout
         android:layout_width="120dp"
         android:layout_height="180dp"
+        android:layout_margin="8dp"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -25,9 +26,10 @@
                 android:id="@+id/tvProductStockOut"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#FFF000"
+                android:background="@android:color/holo_red_dark"
                 android:gravity="center"
                 android:text="STOKTA YOK"
+                android:textColor="#FFFFFF"
                 android:textStyle="bold" />
 
 
@@ -40,6 +42,7 @@
                 android:gravity="center"
                 android:maxLines="1"
                 android:text="5.99 $"
+                android:textColor="@android:color/primary_text_light"
                 android:textStyle="bold" />
 
             <TextView
@@ -50,15 +53,17 @@
                 android:background="@color/textBackground"
                 android:gravity="center"
                 android:maxLines="1"
-                android:text="PRODUCT_NAME" />
+                android:text="PRODUCT_NAME"
+                android:textColor="@android:color/primary_text_light" />
         </RelativeLayout>
 
 
         <Button
             android:id="@+id/btnProductView"
+            style="@style/button"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:text="View"
+            android:text="@string/view_them"
             android:textStyle="bold" />
     </LinearLayout>
 </LinearLayout>

@@ -39,9 +39,6 @@ public class API {
 
     static class Product {
         public static Functions.WebResult insert(String productBrand, String productName, String productDescription, int productCategory, String productImage, String productWeight, float productPrice) {
-
-            //todo image for upload olacka string değil
-
             productName = Functions.clearAndEncodeData(productName);
             productDescription = Functions.encodeData(productDescription);
 
@@ -64,11 +61,7 @@ public class API {
             return get("", category, page, count);
         }
 
-        //kategoriledekiler ve babsı varsa ondakiler ? daha doğrusu tersi //todo
         public static CommonObjects.Product[] get(String search, int category, int page, int count) {
-            //todo result dizimi teklimi ? bak bi ona göre
-            Log.e("a1sdas", "aaaa1");
-
             HashMap<String, String> params = new HashMap<>();
             params.put("req", "select");
             params.put("cat", "product");
@@ -148,35 +141,6 @@ public class API {
             }
         }
 
-        public static boolean put(int productId, String productName, String productDescription, int productCategory, String productImage) {
-
-            //todo image for upload olacka string değil
-//todo değişen varmı bak bi yoksa devam et
-
-
-            productName = Functions.clearAndEncodeData(productName);
-            productDescription = Functions.encodeData(productDescription);
-
-            String imageURL = API.uploadImage(productImage);
-
-            HashMap<String, String> params = new HashMap<>();
-            params.put("method", "put");
-            params.put("cat", "product");
-
-            params.put("product_id", String.valueOf(productId));
-            params.put("product_name", productName);
-            params.put("product_description", productDescription);
-            params.put("product_category", String.valueOf(productCategory));
-            params.put("product_image", imageURL);
-
-            Functions.WebResult result = Functions.getData(params);
-
-            if (result.isConnected() && result.isSuccess()) {
-                return true;
-            } else {
-                return false;
-            }
-        }
 
         public static Functions.WebResult delete(int productId) {
             HashMap<String, String> params = new HashMap<>();
@@ -184,23 +148,6 @@ public class API {
             params.put("cat", "product");
 
             params.put("product_id", String.valueOf(productId));
-
-            return Functions.getData(params);
-        }
-
-        public static Functions.WebResult uploadImage(int productId, String path) {
-            Bitmap bm = BitmapFactory.decodeFile(path);
-            ByteArrayOutputStream bao = new ByteArrayOutputStream();
-            bm.compress(Bitmap.CompressFormat.JPEG, 90, bao);
-            byte[] ba = bao.toByteArray();
-            String base64 = Base64.encodeToString(ba, 0);
-
-            HashMap<String, String> params = new HashMap<>();
-            params.put("req", "upload_image");
-            params.put("cat", "product");
-
-            params.put("product_id", String.valueOf(productId));
-            params.put("product_image", base64);
 
             return Functions.getData(params);
         }
@@ -251,8 +198,6 @@ public class API {
         //Father Id 0 ise, Ana Kategori, değil ise alt kategori
         //Açılışta belleğe alınacak, sonradan kullanılacak
         public static boolean load() {
-            //TODO LOAD Again pu, felan varsa ?
-            //todo api call
             HashMap<String, String> params = new HashMap<>();
             params.put("req", "select");
             params.put("cat", "category");
@@ -292,8 +237,6 @@ public class API {
 
 
         public static CommonObjects.Category[] gets(boolean isReset) {
-            //TODO LOAD Again pu, felan varsa ?
-            //todo api call
             HashMap<String, String> params = new HashMap<>();
             params.put("req", "select");
             params.put("cat", "category");
@@ -362,62 +305,21 @@ public class API {
             return null;
         }
 
-        public static boolean put(int categoryId, int categoryFather, String categoryName, String categoryImage, String categoryColor) {
-
-            //todo image for upload olacka string değil
-//todo değişen varmı bak bi yoksa devam et
-
-
-            categoryName = Functions.clearAndEncodeData(categoryName);
-            categoryColor = Functions.clearAndEncodeData(categoryColor);
-
-            String imageURL = API.uploadImage(categoryImage);
-
-            HashMap<String, String> params = new HashMap<>();
-            params.put("method", "put");
-            params.put("cat", "category");
-
-            params.put("category_id", String.valueOf(categoryId));
-            params.put("category_name", categoryName);
-            params.put("category_father", String.valueOf(categoryFather));
-            params.put("category_color", categoryColor);
-            params.put("category_image", imageURL);
-
-            Functions.WebResult result = Functions.getData(params);
-
-            if (result.isConnected() && result.isSuccess()) {
-                API.Category.load();
-                return true;
-            } else {
-                return false;
-            }
-        }
-
         public static Functions.WebResult insert(int categoryFather, String categoryName, String categoryImage, String categoryColor) {
-
-            //todo image for upload olacka string değil
-//todo değişen varmı bak bi yoksa devam et
-
-
             categoryName = Functions.clearAndEncodeData(categoryName);
             categoryColor = Functions.clearAndEncodeData(categoryColor);
-
-            String imageURL = API.uploadImage(categoryImage);
 
             HashMap<String, String> params = new HashMap<>();
             params.put("req", "insert");
             params.put("cat", "category");
 
-            Log.e("catt", categoryName + "1");
-
             params.put("category_name", categoryName);
             params.put("category_father", String.valueOf(categoryFather));
             params.put("category_color", categoryColor);
-            params.put("category_image", imageURL);
+            params.put("category_image", categoryImage);
 
             return Functions.getData(params);
         }
-
 
         public static Functions.WebResult delete(int categoryId) {
             HashMap<String, String> params = new HashMap<>();
@@ -457,34 +359,6 @@ public class API {
             return Functions.getData(params);
         }
 
-        public static Functions.WebResult post(String orderDate, CommonObjects.OrderItem[] orderItems) {
-            JSONArray items = new JSONArray();
-
-            for (CommonObjects.OrderItem item : orderItems) {
-                try {
-                    JSONObject obj = new JSONObject();
-
-                    obj.put("order_item", item.getItemNo());
-                    obj.put("order_count", item.getItemCount());
-                    obj.put("order_price", item.getItemTotal());
-
-                    items.put(obj);
-                } catch (Exception e) {
-//todo
-                }
-            }
-
-            HashMap<String, String> params = new HashMap<>();
-            params.put("method", "post");
-            params.put("cat", "order");
-
-            params.put("order_date", orderDate);
-            params.put("order_item", items.toString());
-
-            return Functions.getData(params);
-        }
-
-
         public static final int ORDERED = 0; //SIPARIS VERILDI
         public static final int CONFIRM = 0; //ONAYLANDI
         public static final int READY = 0; //HAZIRLANDI
@@ -495,8 +369,8 @@ public class API {
 
         public static Functions.WebResult updateStatus(int orderId, int newStatus) {
             HashMap<String, String> params = new HashMap<>();
-            params.put("method", "put");
-            params.put("cat", "order_status");
+            params.put("req", "status");
+            params.put("cat", "order");
 
             params.put("order_id", String.valueOf(orderId));
             params.put("order_status", String.valueOf(newStatus));
@@ -504,64 +378,14 @@ public class API {
             return Functions.getData(params);
         }
 
-        public static Functions.WebResult deleteOrder(int orderId) {
-            HashMap<String, String> params = new HashMap<>();
-            params.put("method", "delete");
-            params.put("cat", "order");
-
-            params.put("order_id", String.valueOf(orderId));
-
-            return Functions.getData(params);
-        }
-
-        public static CommonObjects.Order get(int orderId) {
+        public static CommonObjects.Order get(int orderId, boolean isAdmin) {
             try {
                 HashMap<String, String> params = new HashMap<>();
-                params.put("method", "get");
+                params.put("req", "get");
                 params.put("cat", "order");
 
                 params.put("order_id", String.valueOf(orderId));
-
-                Functions.WebResult result = Functions.getData(params);
-
-                if (result.isConnected() && result.isSuccess()) {
-                    ArrayList<CommonObjects.OrderItem> orderItems = new ArrayList<>();
-
-                    JSONArray array = new JSONArray(result.getData());
-                    array = array.getJSONArray(5); //todo
-
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject obj = array.getJSONObject(i);
-
-                        CommonObjects.OrderItem item = new CommonObjects.OrderItem(obj.getInt("item_id"), obj.getInt("order_id"), (float) obj.getDouble("item_count"), (float) obj.getDouble("item_price"), API.Product.get(obj.getInt("item_id")));
-
-
-                        orderItems.add(item);
-                    }
-
-                    return new CommonObjects.Order(
-                            Integer.parseInt(result.getJSONData("order_id")),
-                            Integer.parseInt(result.getJSONData("order_status")),
-                            Float.parseFloat(result.getJSONData("order_total")),
-                            result.getJSONData("order_date"), orderItems);
-                } else {
-                    return null;
-                }
-            } catch (Exception e) {
-                return null;
-                //todo
-            }
-        }
-
-        public static ArrayList<CommonObjects.Order> select(int status, int page, int count) {
-            try {
-                HashMap<String, String> params = new HashMap<>();
-                params.put("req", "select");
-                params.put("cat", "order");
-
-                params.put("count", String.valueOf(count));
-                params.put("page", String.valueOf(page));
-                params.put("status", String.valueOf(status));
+                params.put("is_admin", isAdmin ? "1" : "");
 
                 Functions.WebResult result = Functions.getData(params);
 
@@ -581,7 +405,78 @@ public class API {
                                     obj.getInt("order_status"),
                                     (float) obj.getDouble("order_total"),
                                     obj.getString("order_date"),
-                                    new ArrayList<CommonObjects.OrderItem>()
+                                    new ArrayList<CommonObjects.OrderItem>(),
+                                    Integer.parseInt(obj.getString("order_user"))
+
+                            ));
+
+                            lastOrder = obj.getInt("order_id");
+                        }
+
+                        if (!obj.isNull("item_id")) {
+                            ArrayList<CommonObjects.OrderItem> arr = items.get(items.size() - 1).getOrderItems();
+
+                            arr.add(
+                                    new CommonObjects.OrderItem(
+                                            obj.getInt("item"),
+                                            obj.getInt("order_id"),
+                                            (float) obj.getDouble("item_count"),
+                                            (float) obj.getDouble("order_total"),
+                                            API.Product.get(obj.getInt("item")),
+                                            (float) obj.getDouble("item_price"))
+                            );
+
+                            items.get(items.size() - 1).setOrderItems(
+                                    arr
+                            );
+                        }
+                    }
+
+                    return items.size() > 0 ? items.get(0) : null;
+                } else {
+                    return null;
+                }
+            } catch (Exception e) {
+                Functions.Track.error("GO", e);
+                return null;
+            }
+        }
+
+        public static ArrayList<CommonObjects.Order> select(int status, int page, int count) {
+            return select(status, page, count, false);
+        }
+
+        public static ArrayList<CommonObjects.Order> select(int status, int page, int count, boolean isAdmin) {
+            try {
+                HashMap<String, String> params = new HashMap<>();
+                params.put("req", "select");
+                params.put("cat", "order");
+
+                params.put("count", String.valueOf(count));
+                params.put("page", String.valueOf(page));
+                params.put("status", String.valueOf(status));
+                params.put("is_admin", isAdmin ? "1" : "");
+
+                Functions.WebResult result = Functions.getData(params);
+
+                ArrayList<CommonObjects.Order> items = new ArrayList<>();
+
+                if (result.isConnected() && result.isSuccess()) {
+                    JSONArray res = result.getRaw().getJSONArray(2);
+
+                    int lastOrder = 0;
+
+                    for (int i = 0; i < res.length(); i++) {
+                        JSONObject obj = res.getJSONObject(i);
+
+                        if (lastOrder != obj.getInt("order_id")) {
+                            items.add(new CommonObjects.Order(
+                                    obj.getInt("order_id"),
+                                    obj.getInt("order_status"),
+                                    (float) obj.getDouble("order_total"),
+                                    obj.getString("order_date"),
+                                    new ArrayList<CommonObjects.OrderItem>(),
+                                    Integer.parseInt(obj.getString("order_user"))
                             ));
 
                             lastOrder = obj.getInt("order_id");
@@ -608,8 +503,6 @@ public class API {
 
                     return items;
                 } else {
-                    //todo
-                    Log.e("asdasd", result.getRaw().toString());
                     return null;
                 }
             } catch (Exception e) {
@@ -619,8 +512,15 @@ public class API {
         }
     }
 
-    private static String uploadImage(String productImage) {
-        return "";
-        //TODO
+    public static class User {
+        public static Functions.WebResult get(int userNo) {
+            HashMap<String, String> params = new HashMap<>();
+            params.put("req", "get");
+            params.put("cat", "user");
+
+            params.put("user_id", String.valueOf(userNo));
+
+           return Functions.getData(params);
+        }
     }
 }

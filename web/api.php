@@ -1,7 +1,7 @@
 <?php
 
 set_time_limit(0);
-error_reporting(0);
+error_reporting(1);
 
 if (!isset($_POST["req"]) || !isset($_POST["cat"])) {
     echo json_encode([false, "İstek Düzğün Değil"], true);
@@ -53,6 +53,7 @@ function decode($data)
 
     return $data;
 }
+
 
 function clear($data)
 {
@@ -108,6 +109,75 @@ function generate($length)
     }
 
     return $token;
+}
+
+$mailError = "";
+
+function sendOrderEmail($orderId)
+{
+    try {
+        global $pdo;
+        $stmt = $pdo->prepare("SELECT * FROM orders WHERE order_id = " . intval($orderId));
+
+        if (!$stmt->execute()) {
+            return false;
+        }
+
+        $order = $stmt->fetch();
+
+        $stmt = $pdo->prepare("SELECT * FROM order_item WHERE order_id = " . intval($orderId));
+
+        if (!$stmt->execute()) {
+            return false;
+        }
+
+        $orderItems = $stmt->fetchAll();
+
+        $stmt = $pdo->prepare("SELECT * FROM user WHERE user_id = " . intval($order["order_user"]));
+
+        if (!$stmt->execute()) {
+            return false;
+        }
+
+        $orderUser = $stmt->fetch();
+
+        $html = "<html>Merhabalar, <b>" . $orderUser["user_name"] . " " . $orderUser["user_surname"] . " #" . $order["order_id"] . "</b> Nolu Siparişiniz Tamamlanmıştır.<br>";
+        $html .= "<table><tr><th>Ürün Adı</th><th>Ürün Fiyatı</th><th>Ürün Adeti</th><th>Toplam</th></tr>";
+
+        for ($i = 0; $i < count($orderItems); $i++) {
+            $stmt = $pdo->prepare("SELECT * FROM product WHERE product_id = " . intval($orderItems[$i]["item"]));
+
+            if (!$stmt->execute()) {
+                continue;
+            }
+
+            $item = $stmt->fetch();
+
+            $html .= "<tr><td>".$item["product_brand"]." ".$item["product_name"]."</td><td>".$item["product_price"]."</td><td>".$orderItems[$i]["item_count"]."</td><td>".($orderItems[$i]["item_count"]*$item["product_price"])." ₺</td></tr>";
+        }
+
+
+        $html .= "</table><br><b>Sipariş Toplamı = " . $order["order_total"] . " ₺</b></html>";
+
+        include 'class.phpmailer.php';
+        $mail = new PHPMailer();
+        $mail->IsSMTP();
+        $mail->SMTPAuth = true;
+        $mail->Host = 'smtp.gmail.com';
+        $mail->Port = 587;
+        $mail->SMTPSecure = 'tls';
+        $mail->Username = 'bakkal.gunes.eposta@gmail.com';
+        $mail->Password = '123456bakkal';
+        $mail->SetFrom($mail->Username, 'Güneş Bakkal');
+        $mail->AddAddress($orderUser["user_email"], $orderUser["user_name"] . " " . $orderUser["user_surname"]);
+        $mail->CharSet = 'UTF-8';
+        $mail->Subject = 'Siparişiniz Tamamlandı';
+        $content = $html;
+        $mail->MsgHTML($content);
+        return $mail->Send();
+    } catch (Exception $e) {
+        return false;
+    }
 }
 
 function loginCheck()
@@ -219,7 +289,7 @@ function req($req, $cat)
             $stmt = $pdo->prepare("UPDATE product SET product_stock = product_stock + " . clear($_POST["product_stock"]) . " WHERE product_id = " . intval($_POST["product_id"]));
 
             if ($stmt->execute()) {
-                return [false, "Stok Güncellendi"];
+                return [true, "Stok Güncellendi"];
             } else {
                 return [false, "Stok Güncelelnemedi"];
             }
@@ -241,7 +311,7 @@ function req($req, $cat)
             $stmt = $pdo->prepare("UPDATE product SET product_stock = product_stock - " . clear($_POST["product_stock"]) . " WHERE product_id = " . intval($_POST["product_id"]));
 
             if ($stmt->execute()) {
-                return [false, "Stok Güncellendi"];
+                return [true, "Stok Güncellendi"];
             } else {
                 return [false, "Stok Güncelelnemedi"];
             }
@@ -464,6 +534,80 @@ function req($req, $cat)
         } else if ($req == "login_check") {
             global $userId;
             return [$userId > 0, "ok"];
+        } else if ($req == "update_user") {
+            global $userId;
+
+            if ($userId == 0) {
+                return [false, "Önce Giriş Yapmalısın"];
+            }
+
+            $result = arrayCheck([
+                ["user_id", "Kullanıcı", 1, 32],
+                ["user_name", "İsim", 3, 32],
+                ["user_surname", "Soyisim", 3, 32],
+                ["user_address", "Adres", 1, 128],
+                ["user_phone", "Telefon", 1, 32]
+            ]);
+
+            if (!$result[0]) {
+                return $result;
+            }
+
+            $stmt = $pdo->prepare("UPDATE user SET user_name = '" . clear($_POST["user_name"]) . "', user_surname = '" . clear($_POST["user_surname"]) . "', user_address = '" . clear($_POST["user_address"]) . "', user_phone = '" . clear($_POST["user_phone"]) . "' WHERE user_id = " . $userId);
+
+            if ($stmt->execute()) {
+                return [true, "Kullanıcı Bilgeri Güncellendi, Bir sonraki girişte etkili olacaktır"];
+            } else {
+                return [false, "Kullanıcı Bilgeri Güncellenemedi"];
+            }
+        } else if ($req == "get") {
+            if (!$isAdmin) {
+                return [false, "Yetkiniz Yok"];
+            }
+
+            $result = arrayCheck([
+                ["user_id", "Kullanici", 1, 32]
+            ]);
+
+            if (!$result[0]) {
+                return $result;
+            }
+
+            $stmt = $pdo->query("SELECT * FROM user WHERE user_id = " . intval($_POST["user_id"]));
+
+            if ($stmt->execute()) {
+                return [true, "Kullanıcı Getirildi", $stmt->fetchAll()];
+            } else {
+                return [false, "Kullanıcı Getirilirken Sorun Oluştu"];
+            }
+        } else if ($req == "update_password") {
+            global $userId;
+
+            if ($userId == 0) {
+                return [false, "Önce Giriş Yapmalısın"];
+            }
+
+            $result = arrayCheck([
+                ["user_id", "Kullanıcı", 1, 32],
+                ["user_password", "Şifre", 3, 32]
+            ]);
+
+            if (!$result[0]) {
+                return $result;
+            }
+
+            $stmt = $pdo->prepare("UPDATE user SET user_password = '" . sha1($_POST["user_password"]) . "' WHERE user_id = " . $userId);
+
+            if ($stmt->execute()) {
+                return [true, "Kullanıcı Şifresi Güncellendi, Bir sonraki girişte etkili olacaktır"];
+            } else {
+                return [false, "Kullanıcı Şifresi Güncellenemselectedi"];
+            }
+        } else if ($req == "forgot_request") {
+            //todo
+        } else if ($req == "forgot_password") {
+            //todo
+
         } else {
             return [false, "İstek Düzğün Değil"];
         }
@@ -528,7 +672,8 @@ function req($req, $cat)
             $result = arrayCheck([
                 ["page", "Sayfa", 1, 32],
                 ["count", "Sayı", 1, 32],
-                ["status", "Durum", 1, 32]
+                ["status", "Durum", 1, 32],
+                ["is_admin", "", 0, 1]
             ]);
 
             if (!$result[0]) {
@@ -541,10 +686,23 @@ function req($req, $cat)
                 $page = " LIMIT " . (intval($_POST["count"]) * intval($_POST["page"])) . "," . intval($_POST["count"]);
             }
 
-            $where = " WHERE order_user = " . $userId;
+            if ($_POST["is_admin"] != "") {
+                if ($isAdmin) {
+                    $where = "";
+                } else {
+                    $where = " WHERE order_user = " . $userId;
+                }
+            } else {
+                $where = " WHERE order_user = " . $userId;
+            }
 
             if (intval($_POST["status"]) > -1) {
-                $where = " AND order_status = " . intval($_POST["status"]);
+                if ($where == "") {
+                    $where = "WHERE order_status = " . intval($_POST["status"]);
+                } else {
+                    $where .= " AND order_status = " . intval($_POST["status"]);
+                }
+
             }
 
             $stmt = $pdo->prepare("SELECT * FROM (SELECT * FROM orders" . $where . $page . ") ords LEFT JOIN order_item USING(order_id) ORDER BY order_id DESC");
@@ -554,166 +712,231 @@ function req($req, $cat)
             } else {
                 return [false, "Siparişler Getirilemedi"];
             }
-        }
-    } else if ($cat == "category") {
-        if ($req == "insert") {
-            if (!$isAdmin) {
-                return [false, "Yetkiniz Yok"];
-            }
-
-            $result = arrayCheck([
-                ["category_name", "İsim", 2, 32],
-                ["category_father", "Üst Kategori", 0, 32],
-                ["category_color", "Renk", 0, 32],
-                ["category_image", "Resim", 0, 32]
-            ]);
-
-            if (!$result[0]) {
-                return $result;
-            }
-
-            $stmt = $pdo->prepare("INSERT INTO category (category_name, category_father, category_color, category_image) VALUES ('" . clear($_POST["category_name"]) . "', 0, '" . clear($_POST["category_color"]) . "', '" . clear($_POST["category_image"]) . "')");
-
-            if ($stmt->execute()) {
-                return [true, "Kategori Başarıyla Eklendi", $pdo->lastInsertId()];
-            } else {
-                return [false, "Kategori Eklenirken Sorunla Karşılaşıldı"];
-            }
-        } else if ($req == "update") {
-            if (!$isAdmin) {
-                return [false, "Yetkiniz Yok"];
-            }
-
-            $result = arrayCheck([
-                ["category_id", "Kategori", 1, 32],
-                ["category_name", "İsim", 2, 32]//,
-                //["category_father", "Üst Kategori", 0, 32],
-                //["category_color", "Renk", 0, 32],
-                //["category_image", "Resim", 0, 32]
-            ]);
-
-            if (!$result[0]) {
-                return $result;
-            }
-
-            $stmt = $pdo->prepare("UPDATE category SET category_name = '" . clear($_POST["category_name"]) . "' WHERE category_id = " . intval($_POST["category_id"]));
-
-            if ($stmt->execute()) {
-                return [true, "Kategori Başarıyla Güncellendi", $pdo->lastInsertId()];
-            } else {
-                return [false, "Kategori Güncellenirken Bir Sorunla Karşılaşıldı"];
-            }
-        } else if ($req == "delete") {
-            if (!$isAdmin) {
-                return [false, "Yetkiniz Yok"];
-            }
-
-            $result = arrayCheck([
-                ["category_id", "Kategori", 1, 32]
-            ]);
-
-            if (!$result[0]) {
-                return $result;
-            }
-
-            $stmt = $pdo->prepare("DELETE FROM category WHERE category_id = " . intval($_POST["category_id"]));
-
-            if ($stmt->execute()) {
-                return [true, "Kategori Başarıyla Silindi"];
-            } else {
-                return [false, "Kategori Silinirken Bir Sorunla Karşılaşıldı"];
-            }
-        } else if ($req == "select") {
-            $result = arrayCheck([
-                ["count", "Sayı", 1, 32],
-                ["order", "Sıralama", 0, 32], //id asc
-                ["page", "Sayfa", 1, 32]
-            ]);
-
-            if (!$result[0]) {
-                return $result;
-            }
-
-            $order = "";
-
-            if ($_POST["order"] != "") {
-                $order = " ORDER BY " . clear($_POST["order"]);
-            }
-
-            $page = "";
-
-            if (intval($_POST["count"]) > 0) {
-                $page = " LIMIT " . (intval($_POST["count"]) * intval($_POST["page"])) . "," . intval($_POST["count"]);
-            }
-
-            $stmt = $pdo->query("SELECT * FROM category " . $order . $page);
-
-            if ($stmt->execute()) {
-                return [true, "Kategori Başarıyla Getirildi", $stmt->fetchAll()];
-            } else {
-                return [false, "Kategori Getirilirken Bir Sorunla Karşılaşıldı"];
-            }
         } else if ($req == "get") {
+            global $userId;
+
+            if ($userId == 0) {
+                return [false, "Önce Giriş Yapmalısın"];
+            }
+
             $result = arrayCheck([
-                ["category_id", "Kategori", 1, 32]
+                ["order_id", "Sipariş", 1, 32],
+                ["is_admin", "", 0, 1]
             ]);
 
             if (!$result[0]) {
                 return $result;
             }
 
-            $stmt = $pdo->prepare("SELECT * FROM category WHERE category_id = " . intval($_POST["category_id"]));
-
-            if ($stmt->execute() && $stmt->rowCount() > 0) {
-                return [true, "Kategori Başarıyla Getirildi", $stmt->fetch()];
+            if ($_POST["is_admin"] != "") {
+                if ($isAdmin) {
+                    $where = " WHERE order_id = " . intval($_POST["order_id"]);
+                } else {
+                    $where = " WHERE order_user = " . $userId . " order_id = " . intval($_POST["order_id"]);
+                }
             } else {
-                return [false, "Kategori Getirilirken Bir Sorunla Karşılaşıldı"];
+                $where = " WHERE order_user = " . $userId . " AND order_id = " . intval($_POST["order_id"]);
+            }
+
+            $stmt = $pdo->prepare("SELECT * FROM (SELECT * FROM orders" . $where . ") ords LEFT JOIN order_item USING(order_id) ORDER BY order_id DESC");
+
+            if ($stmt->execute()) {
+                return [true, "Sipariş Getirildi", $stmt->fetchAll()];
+            } else {
+                return [false, "Sipariş Getirilemedi"];
+            }
+        } else if ($req == "status") {
+            if (!$isAdmin) {
+                return [false, "Yetkiniz Yok"];
+            }
+
+            $result = arrayCheck([
+                ["order_id", "Sipariş", 1, 32],
+                ["order_status", "Statü", 1, 32]
+            ]);
+
+            if (!$result[0]) {
+                return $result;
+            }
+
+            $stmt = $pdo->query("UPDATE orders SET order_status = " . intval($_POST["order_status"]) . " WHERE order_id = " . intval($_POST["order_id"]));
+
+            if ($stmt->execute()) {
+                if (intval($_POST["order_status"]) == 3) {
+                    if(sendOrderEmail(intval($_POST["order_id"]))){
+                        return[true, "Statü Güncellendi ve Eposta Gönderildi"];
+                    }else{
+                        return[true, "Statü Güncellendi Fakat Eposta Gönderilemedi"];
+                    }
+                }
+
+                return [true, "Statü Güncellendi"];
+            } else {
+                return [false, "Statü Güncellenirken Sorun Oluştu"];
             }
         } else {
-            return [false, "İstek Düzğün Değil"];
+            return [false, "Hatalı Talep"];
         }
-    } else if ($cat == "all") {
-        if ($req == "upload_image") {
-            try {
+    } else
+        if ($cat == "category") {
+            if ($req == "insert") {
                 if (!$isAdmin) {
                     return [false, "Yetkiniz Yok"];
                 }
 
                 $result = arrayCheck([
-                        ["image", "Resim", 1, 0]
-                    ]
-                );
+                    ["category_name", "İsim", 2, 32],
+                    ["category_father", "Üst Kategori", 0, 32],
+                    ["category_color", "Renk", 0, 32],
+                    ["category_image", "Resim", 0, 32]
+                ]);
 
                 if (!$result[0]) {
                     return $result;
                 }
 
-                $image = "images/" . md5(time()) . ".jpeg";
+                $stmt = $pdo->prepare("INSERT INTO category (category_name, category_father, category_color, category_image) VALUES ('" . clear($_POST["category_name"]) . "', 0, '" . clear($_POST["category_color"]) . "', '" . clear($_POST["category_image"]) . "')");
 
-                file_put_contents($image, base64_decode($_POST["image"]));
-
-                $imageInfo = getimagesize($image);
-
-                if ($imageInfo[0] < 128 || $imageInfo[0] > 1024 || $imageInfo[1] < 128 || $imageInfo[1] > 1024) {
-                    return [false, "Ürün resmi 128px den küçük veya 1024 pxden büyük olamaz"];
+                if ($stmt->execute()) {
+                    return [true, "Kategori Başarıyla Eklendi", $pdo->lastInsertId()];
+                } else {
+                    return [false, "Kategori Eklenirken Sorunla Karşılaşıldı"];
+                }
+            } else if ($req == "update") {
+                if (!$isAdmin) {
+                    return [false, "Yetkiniz Yok"];
                 }
 
+                $result = arrayCheck([
+                    ["category_id", "Kategori", 1, 32],
+                    ["category_name", "İsim", 2, 32]//,
+                    //["category_father", "Üst Kategori", 0, 32],
+                    //["category_color", "Renk", 0, 32],
+                    //["category_image", "Resim", 0, 32]
+                ]);
 
-                //|| $imageInfo["mime"] == "image/png   "
-                if (!($imageInfo["mime"] == "image/jpeg" || $imageInfo["mime"] == "image/jpg")) {
-                    unset($image);
-                    return [false, "Ürün Resmi Uygun Formatta Değil"];
+                if (!$result[0]) {
+                    return $result;
                 }
 
+                $stmt = $pdo->prepare("UPDATE category SET category_name = '" . clear($_POST["category_name"]) . "' WHERE category_id = " . intval($_POST["category_id"]));
 
-                return [true, "Ürün Resmi Başarıyla Güncellendi", $image];
-            } catch (Exception $e) {
-                return [false, "Ürün Resmi Güncellenirken Sorunla Karşılaşıldı"];
+                if ($stmt->execute()) {
+                    return [true, "Kategori Başarıyla Güncellendi", $pdo->lastInsertId()];
+                } else {
+                    return [false, "Kategori Güncellenirken Bir Sorunla Karşılaşıldı"];
+                }
+            } else if ($req == "delete") {
+                if (!$isAdmin) {
+                    return [false, "Yetkiniz Yok"];
+                }
+
+                $result = arrayCheck([
+                    ["category_id", "Kategori", 1, 32]
+                ]);
+
+                if (!$result[0]) {
+                    return $result;
+                }
+
+                $stmt = $pdo->prepare("DELETE FROM category WHERE category_id = " . intval($_POST["category_id"]));
+
+                if ($stmt->execute()) {
+                    return [true, "Kategori Başarıyla Silindi"];
+                } else {
+                    return [false, "Kategori Silinirken Bir Sorunla Karşılaşıldı"];
+                }
+            } else if ($req == "select") {
+                $result = arrayCheck([
+                    ["count", "Sayı", 1, 32],
+                    ["order", "Sıralama", 0, 32], //id asc
+                    ["page", "Sayfa", 1, 32]
+                ]);
+
+                if (!$result[0]) {
+                    return $result;
+                }
+
+                $order = "";
+
+                if ($_POST["order"] != "") {
+                    $order = " ORDER BY " . clear($_POST["order"]);
+                }
+
+                $page = "";
+
+                if (intval($_POST["count"]) > 0) {
+                    $page = " LIMIT " . (intval($_POST["count"]) * intval($_POST["page"])) . "," . intval($_POST["count"]);
+                }
+
+                $stmt = $pdo->query("SELECT * FROM category " . $order . $page);
+
+                if ($stmt->execute()) {
+                    return [true, "Kategori Başarıyla Getirildi", $stmt->fetchAll()];
+                } else {
+                    return [false, "Kategori Getirilirken Bir Sorunla Karşılaşıldı"];
+                }
+            } else if ($req == "get") {
+                $result = arrayCheck([
+                    ["category_id", "Kategori", 1, 32]
+                ]);
+
+                if (!$result[0]) {
+                    return $result;
+                }
+
+                $stmt = $pdo->prepare("SELECT * FROM category WHERE category_id = " . intval($_POST["category_id"]));
+
+                if ($stmt->execute() && $stmt->rowCount() > 0) {
+                    return [true, "Kategori Başarıyla Getirildi", $stmt->fetch()];
+                } else {
+                    return [false, "Kategori Getirilirken Bir Sorunla Karşılaşıldı"];
+                }
+            } else {
+                return [false, "İstek Düzğün Değil"];
+            }
+        } else if ($cat == "all") {
+            if ($req == "upload_image") {
+                try {
+                    if (!$isAdmin) {
+                        return [false, "Yetkiniz Yok"];
+                    }
+
+                    $result = arrayCheck([
+                            ["image", "Resim", 1, 0]
+                        ]
+                    );
+
+                    if (!$result[0]) {
+                        return $result;
+                    }
+
+                    $image = "images/" . md5(time()) . ".jpeg";
+
+                    file_put_contents($image, base64_decode($_POST["image"]));
+
+                    $imageInfo = getimagesize($image);
+
+                    if ($imageInfo[0] < 128 || $imageInfo[0] > 1024 || $imageInfo[1] < 128 || $imageInfo[1] > 1024) {
+                        return [false, "Ürün resmi 128px den küçük veya 1024 pxden büyük olamaz"];
+                    }
+
+
+                    //|| $imageInfo["mime"] == "image/png   "
+                    if (!($imageInfo["mime"] == "image/jpeg" || $imageInfo["mime"] == "image/jpg")) {
+                        unset($image);
+                        return [false, "Ürün Resmi Uygun Formatta Değil"];
+                    }
+
+
+                    return [true, "Ürün Resmi Başarıyla Güncellendi", $image];
+                } catch (Exception $e) {
+                    return [false, "Ürün Resmi Güncellenirken Sorunla Karşılaşıldı"];
+                }
+            } else {
+                //todo
             }
         } else {
             //todo
         }
-    } else {
-        //todo
-    }
 }

@@ -1,6 +1,7 @@
 package com.example.bakkal;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
@@ -95,7 +97,6 @@ public class CommonObjects {
 
             }
 
-            Log.e("wqewqe", "sadsadas");
             return stock;
         }
 
@@ -139,12 +140,12 @@ public class CommonObjects {
             try {
                 View category = View.inflate(context, R.layout.product, null);
                 ((TextView) category.findViewById(R.id.tvProductName)).setText(getProductBrand() + " - " + getProductName());
-                ((TextView) category.findViewById(R.id.tvProductPrice)).setText(String.valueOf(getProductPrice()));
+                ((TextView) category.findViewById(R.id.tvProductPrice)).setText(String.valueOf(getProductPrice()) + " ₺");
                 ((TextView) category.findViewById(R.id.tvProductStockOut)).setVisibility(getStock() == 0 ? View.VISIBLE : View.INVISIBLE);
                 ((Button) category.findViewById(R.id.btnProductView)).setTag(this);
                 ((Button) category.findViewById(R.id.btnProductView)).setOnClickListener(MainMenu.listenerOrderItem);
 
-                Functions.loadImage((ImageView) category.findViewById(R.id.ivProductImage), Functions.BASE_URL+ getProductImage());
+                Functions.loadImage((ImageView) category.findViewById(R.id.ivProductImage), Functions.BASE_URL + getProductImage());
 
                 return category;
             } catch (Exception e) {
@@ -183,7 +184,7 @@ public class CommonObjects {
         }
 
         public String getCategoryImage() {
-            return Functions.BASE_URL+ categoryImage;
+            return Functions.BASE_URL + categoryImage;
         }
 
         public String getCategoryName() {
@@ -221,7 +222,22 @@ public class CommonObjects {
         private String orderDate;
         private View view;
         private boolean isItemListOpen = false;
+        private int userNo;
         LinearLayout.LayoutParams paramHide, paramShow;
+
+        public Order(int orderNo, int orderStatus, float orderTotal, String orderDate, ArrayList<CommonObjects.OrderItem> orderItems, int userNo) {
+            setOrderNo(orderNo);
+            setOrderStatus(orderStatus);
+            setOrderDate(orderDate);
+            setOrderTotal(orderTotal);
+            setOrderItems(orderItems);
+
+
+            paramHide = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0);
+            paramShow = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) MainMenu.context.getResources().getDimension(R.dimen.show_menu));
+
+            setUserNo(userNo);
+        }
 
         public Order(int orderNo, int orderStatus, float orderTotal, String orderDate, ArrayList<CommonObjects.OrderItem> orderItems) {
             setOrderNo(orderNo);
@@ -235,6 +251,74 @@ public class CommonObjects {
             paramShow = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, (int) MainMenu.context.getResources().getDimension(R.dimen.show_menu));
         }
 
+        public void showUserButton() {
+            view.findViewById(R.id.btnShowOrderUserInfo).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.btnShowOrderUserInfo).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showUserInfo();
+                }
+            });
+        }
+
+        public void showUpdateButton() {
+            view.findViewById(R.id.btnSetStatue).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.btnSetStatue).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    setOrderStatus();
+                }
+            });
+        }
+
+        private void setOrderStatus() {
+            Functions.WebResult result = API.Order.updateStatus(getOrderNo(), ControlPanel.spinnerSetStatue.getSelectedItemPosition());
+
+            if (result.isConnected() && result.isSuccess()) {
+                Functions.message(ControlPanel.context, "", result.getData(), false, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ControlPanel.ordersFromStatue(null);
+                    }
+                });
+
+            } else {
+                Functions.message(ControlPanel.context, "", result.getData(), true);
+            }
+        }
+
+        private void showUserInfo() {
+            try {
+
+                Functions.WebResult result = API.User.get(getUserNo());
+
+                if (result.isConnected() && result.isSuccess()) {
+                    if (result.getRaw().getJSONArray(2).length() == 0) {
+                        Functions.message(MainMenu.context, "", ControlPanel.context.getString(R.string.found_user), true);
+                        return;
+                    }
+
+                    JSONObject usr = result.getRaw().getJSONArray(2).getJSONObject(0);
+
+                    String message = ControlPanel.context.getString(R.string.user_info, usr.getString("user_name"), usr.getString("user_surname"), usr.getString("user_phone"), usr.getString("user_address"));
+
+                    Functions.message(ControlPanel.context, ControlPanel.context.getString(R.string.user_info_title), message, false);
+                } else {
+                    Functions.message(MainMenu.context, "", result.getData(), true);
+                }
+            } catch (Exception e) {
+                Functions.Track.error("SUI", e);
+            }
+        }
+
+        public int getUserNo() {
+            return userNo;
+        }
+
+        public void setUserNo(int userNo) {
+            this.userNo = userNo;
+        }
+
         public void setOrderDate(String orderDate) {
             this.orderDate = orderDate;
         }
@@ -244,7 +328,7 @@ public class CommonObjects {
         }
 
         public void setOrderItems(ArrayList<CommonObjects.OrderItem> orderItems) {
-            Log.e("asdasd", orderItems.size()+"boyutl");
+            Log.e("asdasd", orderItems.size() + "boyutl");
             this.orderItems = orderItems;
         }
 
@@ -285,7 +369,7 @@ public class CommonObjects {
                     break;
             }
 
-            if(id == 0){
+            if (id == 0) {
                 return "";
             }
 
@@ -308,7 +392,7 @@ public class CommonObjects {
             if (view != null) {
                 ((LinearLayout) view.findViewById(R.id.llOrderItemList)).removeAllViews();
                 view.findViewById(R.id.svOrderItem).setLayoutParams(paramHide);
-                isItemListOpen =false;
+                isItemListOpen = false;
             }
         }
 
@@ -326,15 +410,13 @@ public class CommonObjects {
                 ((ScrollView) view.findViewById(R.id.svOrderItem)).setScrollX(0);
 
                 for (int i = 0; i < orderItems.size(); i++) {
-                    Log.e("asdas","girdi");
-                    if(orderItems.get(i) == null || orderItems.get(i) .getProduct() == null){
+                    if (orderItems.get(i) == null || orderItems.get(i).getProduct() == null) {
                         continue;
                     }
-                    Log.e("asdas","gördü");
 
                     View x = View.inflate(MainMenu.context, R.layout.order_item, null);
 
-                    ((TextView) x.findViewById(R.id.orderItemBrandNName)).setText(orderItems.get(i) .getProduct().getProductBrand() + " - " + orderItems.get(i).getProduct().getProductName());
+                    ((TextView) x.findViewById(R.id.orderItemBrandNName)).setText(orderItems.get(i).getProduct().getProductBrand() + " - " + orderItems.get(i).getProduct().getProductName());
                     ((TextView) x.findViewById(R.id.orderItemCount)).setText(orderItems.get(i).getItemCount() + "");
                     ((TextView) x.findViewById(R.id.orderItemPrice)).setText(orderItems.get(i).getItemPrice() + "");
                     ((TextView) x.findViewById(R.id.orderItemTotal)).setText(Functions.two(orderItems.get(i).getItemPrice() * orderItems.get(i).getItemCount()) + "");
@@ -368,7 +450,7 @@ public class CommonObjects {
                 ((TextView) view.findViewById(R.id.orderOrderStatus)).setText(getOrderStatus(getOrderStatus()));
                 ((TextView) view.findViewById(R.id.orderOrderAmound)).setText(getOrderTotal() + " ₺");
 
-                Button btn = ((Button) view.findViewById(R.id.btnShowOrderItem));
+                ImageView btn = ((ImageView) view.findViewById(R.id.btnShowOrderItem));
 
                 btn.setTag(this);
                 btn.setOnClickListener(new View.OnClickListener() {
@@ -377,8 +459,10 @@ public class CommonObjects {
                         try {
                             if (isItemListOpen) {
                                 hideList();
+                                ((ImageView) view.findViewById(R.id.btnShowOrderItem)).setImageDrawable(MainMenu.context.getDrawable(android.R.drawable.arrow_down_float));
                             } else {
                                 buildList(((Order) v.getTag()).getOrderItems());
+                                ((ImageView) view.findViewById(R.id.btnShowOrderItem)).setImageDrawable(MainMenu.context.getDrawable(android.R.drawable.arrow_up_float));
                             }
                         } catch (Exception e) {
                             Functions.Track.error("GO-GV-CL", e);
@@ -503,7 +587,7 @@ public class CommonObjects {
 
                 Product x = getProduct();
 
-                Functions.loadImage((ImageView) view.findViewById(R.id.ivCartItemImage), x.getProductImage());
+                Functions.loadImage((ImageView) view.findViewById(R.id.ivCartItemImage), Functions.BASE_URL + x.getProductImage());
 
                 ((TextView) view.findViewById(R.id.tvCartItemBrandNName)).setText(x.getProductBrand() + " - " + x.getProductName() + " (" + x.getPacketWeight() + ")");
 
@@ -518,12 +602,13 @@ public class CommonObjects {
                             EditText et = view.findViewById(R.id.etCartItemCount);
 
                             if (et.getText() == null) {
-                                //todo
+                                Functions.message(MainMenu.context, "", MainMenu.context.getString(R.string.allow_stock), true);
+                                return;
                             } else {
                                 float count = Float.parseFloat(et.getText().toString());
 
                                 if (count <= 0) {
-                                    //todo
+                                    Functions.message(MainMenu.context, "", MainMenu.context.getString(R.string.allow_stock), true);
                                     return;
                                 }
 
@@ -534,7 +619,6 @@ public class CommonObjects {
 
                                 setItemCount(count);
                                 setItemTotal(count * getProduct().getProductPrice());
-                                //todo updae ?
 
                                 ((TextView) view.findViewById(R.id.tvCartPriceNTotal)).setText(getItemTotal() + " ₺\n(" + getProduct().getProductPrice() + " ₺)");
 
@@ -551,7 +635,6 @@ public class CommonObjects {
                     @Override
                     public void onClick(View v) {
                         try {
-                            //todo
                             for (int i = 0; i < MainMenu.shoppingCart.size(); i++) {
                                 if (MainMenu.shoppingCart.get(i).getItemNo() == getItemNo()) {
                                     MainMenu.shoppingCart.remove(i);

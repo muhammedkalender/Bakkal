@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.StrictMode;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -53,12 +55,12 @@ public class Functions {
     }
 
     public static String clearAndEncodeData(String productName) {
-        //todo
+        //Gerek Kalmadı
         return productName;
     }
 
     public static String encodeData(String productDescription) {
-        //todo
+        //Gerek Kalmadı
         return productDescription;
     }
 
@@ -84,8 +86,6 @@ public class Functions {
 
     public static void loadImage(final ImageView object, String categoryImage) {
         try {
-            Log.e("asdasd", categoryImage + "");
-
             Glide.with(CONTEXT).load(categoryImage).into(object);
 
            /* Glide.with(CONTEXT).load(categoryImage).addListener(new RequestListener<Drawable>() {
@@ -216,16 +216,13 @@ public class Functions {
                 while ((line = br.readLine()) != null) {
                     response += line;
                 }
-                Log.e("1sdsa", " iii");
                 return new WebResult(true, true, response);
             } else {
-                Log.e("1sdsa", " kötüüü");
 
                 return new WebResult(false, false, "");
             }
         } catch (Exception e) {
-            //todo
-            Log.e("mesajjj", e.toString() + "");
+            Track.error("GET", e);
             return new WebResult(false, false, "");
         }
     }
@@ -320,8 +317,15 @@ public class Functions {
     }
 
     public static boolean isOnline() {
-        //todo
-        return true;
+        try {
+            ConnectivityManager connectivityManager
+                    = (ConnectivityManager) MainMenu.context.getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+        } catch (Exception e) {
+            Track.error("IO", e);
+            return false;
+        }
     }
 
 
@@ -333,11 +337,10 @@ public class Functions {
             new AlertDialog.Builder(CONTEXT)
                     .setTitle(title)
                     .setMessage(message)
-                    .setIcon(android.R.drawable.ic_dialog_alert).setNeutralButton("Tamam", null).show();
+                    .setIcon(isError ? android.R.drawable.ic_dialog_alert : android.R.drawable.ic_dialog_info).setNeutralButton("Tamam", null).show();
 
         } catch (Exception e) {
             Track.error("SHW_MSG", e);
-            //todo
         }
     }
 
@@ -349,11 +352,10 @@ public class Functions {
             new AlertDialog.Builder(context)
                     .setTitle(title)
                     .setMessage(message)
-                    .setIcon(android.R.drawable.ic_dialog_alert).setNeutralButton("Tamam", null).show();
+                    .setIcon(isError ? android.R.drawable.ic_dialog_alert : android.R.drawable.ic_dialog_info).setNeutralButton("Tamam", null).show();
 
         } catch (Exception e) {
             Track.error("SHW_MSG", e);
-            //todo
         }
     }
 
@@ -369,7 +371,6 @@ public class Functions {
 
         } catch (Exception e) {
             Track.error("SHW_MSG", e);
-            //todo
         }
     }
 

@@ -3,12 +3,7 @@ package com.example.bakkal;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
-import android.support.design.internal.NavigationMenu;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.text.Layout;
 import android.util.Log;
 import android.view.SubMenu;
 import android.view.View;
@@ -28,9 +23,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -48,7 +40,7 @@ public class MainMenu extends AppCompatActivity
     public static ArrayList<CommonObjects.Category> categories;
     public static View.OnClickListener listenerOrderItem;
 
-    private int countProductPage = 20, currentProductPage = 0, currentProductCategory = 0;
+    private int countProductPage = 9, currentProductPage = 0, currentProductCategory = 0;
 
     private static LinearLayout llProduct;
     private ScrollView svProduct;
@@ -67,6 +59,9 @@ public class MainMenu extends AppCompatActivity
     public static ScrollView svOrder;
     public static LinearLayout llOrderList;
 
+
+    public static LinearLayout llUserInfo;
+
     private EditText etSearch;
 
     public static ArrayList<CommonObjects.OrderItem> shoppingCart = new ArrayList<>();
@@ -75,91 +70,72 @@ public class MainMenu extends AppCompatActivity
         user = new User();
         user.load();
 
-        //todo kategory seçilsede, menü seçili kalıyor
-
         if (user.isLogged()) {
             navigationView.getMenu().setGroupVisible(R.id.nav_menu_visitor, false);
             navigationView.getMenu().setGroupVisible(R.id.nav_menu_user, true);
             navigationView.getMenu().findItem(R.id.nav_admin).setVisible(user.isAdmin());
             ((TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_username)).setText(user.getName() + " " + user.getSurname());
             ((TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_email)).setText(user.getEmail());
-
         } else {
             navigationView.getMenu().setGroupVisible(R.id.nav_menu_visitor, true);
             navigationView.getMenu().setGroupVisible(R.id.nav_menu_user, false);
             ((TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_username)).setText(R.string.visitor);
             ((TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_email)).setText("");
-
         }
     }
 
     public void viewProduct(CommonObjects.Product obj) {
         try {
-            Functions.loadImage((ImageView) findViewById(R.id.ivProductInfoImage), Functions.BASE_URL+ obj.getProductImage());
+            Functions.loadImage((ImageView) findViewById(R.id.ivProductInfoImage), Functions.BASE_URL + obj.getProductImage());
 
             ((EditText) findViewById(R.id.etProductInfoBrand)).setText(obj.getProductBrand());
             ((EditText) findViewById(R.id.etProductInfoDesc)).setText(obj.getProductDescription());
-            Log.e("asdas", "xx");
             ((EditText) findViewById(R.id.etProductInfoStock)).setText(String.valueOf(obj.getStock()));
-            Log.e("asdas", "xx222");
-
             ((EditText) findViewById(R.id.etProductInfoName)).setText(obj.getProductName());
             ((EditText) findViewById(R.id.etProductInfoWeight)).setText(obj.getPacketWeight());
             ((EditText) findViewById(R.id.etProductInfoPrice)).setText(String.valueOf(obj.getProductPrice()));
-            ((EditText)findViewById(R.id.etProductInfoCategory)).setText(findCategory(obj.getProductCategory()));
+            ((EditText) findViewById(R.id.etProductInfoCategory)).setText(findCategory(obj.getProductCategory()));
             ((Button) findViewById(R.id.btnProductInfoConfirm)).setTag(obj);
-            ((EditText)findViewById(R.id.etProductInfoId)).setText(String.valueOf(obj.getId()));
+            ((EditText) findViewById(R.id.etProductInfoId)).setText(String.valueOf(obj.getId()));
             ((Button) findViewById(R.id.btnProductInfoConfirm)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//todo
                     try {
                         EditText etStock = findViewById(R.id.pre_product_info_stock);
 
                         if (etStock.getText() == null) {
-                            Log.e("asdas", "xx2");
+                            Functions.message(MainMenu.context, "", getString(R.string.allow_stock), true);
 
-                            //todo
                             return;
                         }
 
                         float orderCount = Float.parseFloat(etStock.getText().toString());
 
                         if (orderCount <= 0) {
-                            Log.e("asdas", "xx1");
-
-                            //todo
+                            Functions.message(MainMenu.context, "", getString(R.string.allow_stock), true);
                             return;
                         }
 
                         CommonObjects.Product cobj = (CommonObjects.Product) v.getTag();
-                        Log.e("asdas", "xx233");
 
                         if (cobj != null && orderCount > cobj.getStock()) {
                             Functions.message(MainMenu.this, "", Functions.CONTEXT.getString(R.string.more_than_stock), true);
                             return;
                         }
-                        Log.e("asdas", "xx244");
-
 
                         int index = -1;
-                        Log.e("asdas", "xx255");
 
                         for (int i = 0; i < shoppingCart.size(); i++) {
                             if (shoppingCart.get(i).getProduct().getId() == cobj.getId()) {
                                 index = i;
                             }
                         }
-                        Log.e("asdas", "xx667772");
 
                         if (index != -1) {
                             shoppingCart.get(index).setItemCount(shoppingCart.get(index).getItemCount() + orderCount);
                             shoppingCart.get(index).setItemTotal(shoppingCart.get(index).getItemCount() * shoppingCart.get(index).getProduct().getProductPrice());
-                            Log.e("asdas", "xx29999999");
-                            //todo carttıda update etmeye gerek varmı ?
                         } else {
                             if (cobj == null) {
-                                Log.e("asdasd", "nykkke");
                             }
 
                             CommonObjects.OrderItem x = new CommonObjects.OrderItem(cobj.getId(), 0, orderCount, orderCount * cobj.getProductPrice(), cobj);
@@ -172,6 +148,8 @@ public class MainMenu extends AppCompatActivity
                 }
             });
 
+            llUserInfo.setVisibility(View.INVISIBLE);
+            llOrder.setVisibility(View.INVISIBLE);
             llShoppingCart.setVisibility(View.INVISIBLE);
             llProductInfo.setVisibility(View.VISIBLE);
             llProduct.setVisibility(View.INVISIBLE);
@@ -181,8 +159,8 @@ public class MainMenu extends AppCompatActivity
     }
 
     private String findCategory(int productCategory) {
-        for (int i = 0; i < categories.size();i++){
-            if(categories.get(i).getCategoryId() == productCategory){
+        for (int i = 0; i < categories.size(); i++) {
+            if (categories.get(i).getCategoryId() == productCategory) {
                 return categories.get(i).getCategoryName();
             }
         }
@@ -198,7 +176,6 @@ public class MainMenu extends AppCompatActivity
         }
 
         if (shoppingCart.size() > 0) {
-            Log.e("a1", "asdasdas");
             navigationView.getMenu().findItem(R.id.nav_cart).setTitle(Functions.CONTEXT.getString(R.string.full_cart, shoppingCart.size()));
             btnCartConfirm.setEnabled(true);
 
@@ -229,6 +206,8 @@ public class MainMenu extends AppCompatActivity
                 shoppingCart.get(i).setIndex(i);
             }
 
+            llUserInfo.setVisibility(View.INVISIBLE);
+            llOrder.setVisibility(View.INVISIBLE);
             llProduct.setVisibility(View.INVISIBLE);
             llProductInfo.setVisibility(View.INVISIBLE);
             llShoppingCart.setVisibility(View.VISIBLE);
@@ -248,7 +227,6 @@ public class MainMenu extends AppCompatActivity
             categories.add(aof);
 
             subMenu.add(aof.getCategoryName());
-            //todo subMenu.getItem(0).setIcon()
 
             for (int i = 1; i <= categories.size() - 1; i++) {
                 subMenu.add(categories.get(i - 1).getCategoryName());
@@ -271,9 +249,6 @@ public class MainMenu extends AppCompatActivity
         currentProductCategory = 0;
 
         loadProducts(0, false, false);
-
-
-        //todo
     }
 
     public void loadProducts(int category) {
@@ -281,16 +256,15 @@ public class MainMenu extends AppCompatActivity
     }
 
     public void loadProducts(int category, boolean isPageChange, boolean isSearch) {
-        //todo
-
         onSearch = isSearch;
 
+        llUserInfo.setVisibility(View.INVISIBLE);
+        llOrder.setVisibility(View.INVISIBLE);
         llProduct.setVisibility(View.VISIBLE);
         llShoppingCart.setVisibility(View.INVISIBLE);
         llProductInfo.setVisibility(View.INVISIBLE);
 
         if (isPageChange) {
-            //todo
         } else {
             glProduct.removeAllViews();
         }
@@ -308,13 +282,11 @@ public class MainMenu extends AppCompatActivity
             if (isPageChange && currentProductPage > 0) {
                 currentProductPage--;
             }
-            //todo
         }
 
         for (int i = 0; i < products.length; i++) {
             View view = products[i].getView(this);
             glProduct.addView(view);
-            Log.e("sadas", products[i].getProductName() + "");
             currentProductCategory = isSearch ? 0 : category;
         }
     }
@@ -352,6 +324,7 @@ public class MainMenu extends AppCompatActivity
             llOrderList.addView(objs.get(i).getView());
         }
 
+        llUserInfo.setVisibility(View.INVISIBLE);
         llOrder.setVisibility(View.VISIBLE);
         llProductInfo.setVisibility(View.INVISIBLE);
         llShoppingCart.setVisibility(View.INVISIBLE);
@@ -364,12 +337,11 @@ public class MainMenu extends AppCompatActivity
         totalAmount,
         OrderItems = { itemno, itemcount, itemprice ( serer ) }
      */
-    public void complateOrder(View v) {
+    public void completeOrder(View v) {
         if (shoppingCart.size() == 0) {
-            //todo
+            Functions.message(this, "", getString(R.string.cart_null), true);
             return;
         }
-
 
         int itemCount = 0;
         float totalAmount = 0;
@@ -388,15 +360,13 @@ public class MainMenu extends AppCompatActivity
 
                 arrItems.put(obj);
             } catch (Exception e) {
-                //todo
                 Functions.Track.error("CO-FI", e);
             }
         }
-        Log.e("sdad", arrItems.toString());
+
         Functions.WebResult result = API.Order.post(itemCount, totalAmount, arrItems.toString());
 
         if (result.isConnected() && result.isSuccess()) {
-            //todo
             Functions.message(MainMenu.context, "", result.getData(), false, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -406,7 +376,6 @@ public class MainMenu extends AppCompatActivity
                 }
             });
         } else {
-            //todo
             Functions.message(MainMenu.context, "", result.getData(), true);
         }
     }
@@ -429,6 +398,17 @@ public class MainMenu extends AppCompatActivity
 
         context = this;
 
+        if (Functions.isOnline() == false) {
+            Functions.message(this, "", getString(R.string.online), true, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    System.exit(0);
+                }
+            });
+
+            return;
+        }
+
         glProduct = findViewById(R.id.glProduct);
         svProduct = findViewById(R.id.svProduct);
         llProduct = findViewById(R.id.llProduct);
@@ -443,16 +423,17 @@ public class MainMenu extends AppCompatActivity
         llOrder = findViewById(R.id.llOrder);
         llOrderList = findViewById(R.id.llOrderList);
 
-        etSearch= findViewById(R.id.etProductSearch);
+        etSearch = findViewById(R.id.etProductSearch);
 
         svOrder = findViewById(R.id.svOrder);
+
+        llUserInfo = findViewById(R.id.llUserPanel);
 
         btnCartConfirm = findViewById(R.id.btnCartConfirm);
         btnCartConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //todo
-                complateOrder(v);
+                completeOrder(v);
             }
         });
 
@@ -472,7 +453,6 @@ public class MainMenu extends AppCompatActivity
         // ImagePicker.setMinQuality(128, 128);
         loadUser();
 
-        Toast.makeText(this, user.getId() + "" + user.getTokenKey(), Toast.LENGTH_SHORT).show();
 
         //   ((Button) findViewById(R.id.test)).setText(user.getName());
 
@@ -492,17 +472,26 @@ public class MainMenu extends AppCompatActivity
                 llOrder.setVisibility(View.INVISIBLE);
                 llShoppingCart.setVisibility(View.INVISIBLE);
                 llProductInfo.setVisibility(View.INVISIBLE);
+                llUserInfo.setVisibility(View.INVISIBLE);
                 llProduct.setVisibility(View.VISIBLE);
             } else if (llProductInfo.getVisibility() == View.VISIBLE) {
                 llOrder.setVisibility(View.INVISIBLE);
+                llUserInfo.setVisibility(View.INVISIBLE);
                 llShoppingCart.setVisibility(View.INVISIBLE);
                 llProductInfo.setVisibility(View.INVISIBLE);
                 llProduct.setVisibility(View.VISIBLE);
             } else if (llOrder.getVisibility() == View.VISIBLE) {
                 llOrder.setVisibility(View.INVISIBLE);
+                llUserInfo.setVisibility(View.INVISIBLE);
                 llShoppingCart.setVisibility(View.INVISIBLE);
                 llProductInfo.setVisibility(View.INVISIBLE);
                 llProduct.setVisibility(View.VISIBLE);
+            } else if (llUserInfo.getVisibility() == View.VISIBLE) {
+                llOrder.setVisibility(View.INVISIBLE);
+                llProduct.setVisibility(View.VISIBLE);
+                llShoppingCart.setVisibility(View.INVISIBLE);
+                llProductInfo.setVisibility(View.INVISIBLE);
+                llUserInfo.setVisibility(View.INVISIBLE);
             } else if (etSearch.getText() != null && etSearch.getText().toString().equals("") == false) {
                 etSearch.setText("");
                 searchProduct(null);
@@ -545,6 +534,7 @@ public class MainMenu extends AppCompatActivity
                 Functions.setConfig("is_logged", false);
                 loadUser();
                 Functions.message(this, "", getString(R.string.exit_ok), false);
+                loadCategorises();
                 break;
             case R.id.nav_login:
                 startActivity(new Intent(MainMenu.this, LoginOrRegister.class).putExtra("request", "login"));
@@ -563,6 +553,9 @@ public class MainMenu extends AppCompatActivity
                 break;
             case R.id.nav_admin:
                 startActivity(new Intent(MainMenu.this, ControlPanel.class));
+                break;
+            case R.id.nav_account:
+                showAccount();
                 break;
             default:
                 loadCategorises(item.getTitle().toString());
@@ -588,9 +581,85 @@ public class MainMenu extends AppCompatActivity
         return true;
     }
 
+    private void showAccount() {
+        llOrder.setVisibility(View.INVISIBLE);
+        llProduct.setVisibility(View.INVISIBLE);
+        llShoppingCart.setVisibility(View.INVISIBLE);
+        llProductInfo.setVisibility(View.INVISIBLE);
+        llUserInfo.setVisibility(View.VISIBLE);
+
+        ((EditText) findViewById(R.id.etRegisterPhone)).setText(user.getPhone());
+        ((EditText) findViewById(R.id.etRegisterAddress)).setText(user.getAddress());
+        ((EditText) findViewById(R.id.etRegisterEmail)).setText(user.getEmail());
+        ((EditText) findViewById(R.id.etRegisterName)).setText(user.getName());
+        ((EditText) findViewById(R.id.etRegisterSurName)).setText(user.getSurname());
+
+    }
+
+    private void resetEdit(int id) {
+        try {
+            ((EditText) findViewById(id)).setText("");
+        } catch (Exception e) {
+            Functions.Track.error("RE", e);
+        }
+    }
+
+    private String editValue(int id) {
+        try {
+            return ((EditText) findViewById(id)).getText().toString();
+        } catch (Exception e) {
+            Functions.Track.error("EDV", e);
+            return "";
+        }
+    }
+
     private void showCart() {
 
         loadCart();
         updateCartInfo();
+    }
+
+    public void updatePassword(View view) {
+        if (!user.isLogged()) {
+            return;
+        }
+
+        if (editValue(R.id.etRegisterPassword).equals("") || editValue(R.id.etRegisterPasswordRepeat).equals("")) {
+            Functions.message(this, "", getString(R.string.null_password), true);
+
+            return;
+        } else if (!editValue(R.id.etRegisterPassword).equals(editValue(R.id.etRegisterPasswordRepeat))) {
+            Functions.message(this, "", getString(R.string.match_password), true);
+            return;
+        }
+
+        Functions.WebResult result = user.changePassword(editValue(R.id.etRegisterPassword));
+
+        if (result.isConnected() && result.isSuccess()) {
+            Functions.message(this, "", result.getData(), false, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Functions.setConfig("is_logged", false);
+                    loadUser();
+                    Functions.message(MainMenu.this, "", getString(R.string.exit_ok), false);
+                    llUserInfo.setVisibility(View.INVISIBLE);
+                    llProduct.setVisibility(View.VISIBLE);
+                }
+            });
+        } else {
+            Functions.message(this, "", result.getData(), true);
+        }
+    }
+
+    public void updateUserInfo(View view) {
+        Functions.WebResult result = user.update(editValue(R.id.etRegisterName), editValue(R.id.etRegisterSurName), editValue(R.id.etRegisterAddress), editValue(R.id.etRegisterPhone));
+
+        if (result.isConnected() && result.isSuccess()) {
+            Functions.message(this, "", result.getData(), false);
+            MainMenu.loadUser();
+        } else {
+            Functions.message(this, "", result.getData(), true);
+        }
+
     }
 }

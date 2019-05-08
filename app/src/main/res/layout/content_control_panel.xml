@@ -22,23 +22,41 @@
 
             <Button
                 android:layout_width="120dp"
-                android:layout_height="160dp"
+                android:layout_height="180dp"
+                style="@style/button"
+
+                android:layout_margin="8dp"
                 android:onClick="loadCategory"
                 android:text="@string/add_category" />
 
 
             <Button
                 android:layout_width="120dp"
-                android:layout_height="160dp"
+                android:layout_height="180dp"
+                android:layout_margin="8dp"
+                style="@style/button"
+
                 android:onClick="addProduct"
                 android:text="@string/add_product" />
 
 
             <Button
                 android:layout_width="120dp"
-                android:layout_height="160dp"
+                android:layout_height="180dp"
+                style="@style/button"
+
+                android:layout_margin="8dp"
                 android:onClick="editProduct"
                 android:text="@string/edit_product" />
+
+            <Button
+                android:layout_width="120dp"
+                android:layout_height="180dp"
+                android:layout_margin="8dp"
+                style="@style/button"
+                android:onClick="editOrder"
+                android:text="@string/editOrder" />
+
 
         </GridLayout>
     </ScrollView>
@@ -251,8 +269,8 @@
                         android:id="@+id/etProductInfoStock"
                         style="@style/input_obj"
                         android:layout_width="match_parent"
-                        android:editable="false"
                         android:layout_height="wrap_content"
+                        android:editable="false"
                         android:hint="@string/hint_product_stock" />
 
                     <View
@@ -269,10 +287,10 @@
                     <EditText
                         android:id="@+id/etProductInfoPrice"
                         style="@style/input_obj"
-                        android:inputType="numberDecimal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="0.5" />
+                        android:hint="0.5"
+                        android:inputType="numberDecimal" />
 
                     <View
                         android:layout_width="match_parent"
@@ -290,8 +308,8 @@
                         style="@style/input_obj"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:lines="5"
-                        android:hint="@string/hint_product_desc" />
+                        android:hint="@string/hint_product_desc"
+                        android:lines="5" />
 
                     <View
                         android:layout_width="match_parent"
@@ -322,6 +340,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/hr_height"
                             android:background="@color/colorHR" />
+
                         <TextView
                             style="@style/input_pre"
                             android:layout_width="wrap_content"
@@ -333,22 +352,117 @@
                             style="@style/input_obj"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="number"
-                            android:hint="@string/hint_product_stock" />
+                            android:hint="@string/hint_product_stock"
+                            android:inputType="number" />
 
                         <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:onClick="addStock"
-                            android:text="@string/add_stock"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:text="@string/add_stock" />
 
                         <Button
-                            android:onClick="delStock"
-                            android:text="@string/del_stock"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:onClick="delStock"
+                            android:text="@string/del_stock" />
                     </LinearLayout>
                 </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llAPOrder"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        android:orientation="vertical">
+
+        <ScrollView
+            android:id="@+id/svAPOrder"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/llAPContent"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/input_pre"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/get_from_statues" />
+
+                <Spinner
+                    android:id="@+id/spinOrderStatus"
+                    android:layout_width="match_parent"
+                    android:entries="@array/order_status"
+                    android:layout_height="wrap_content" />
+
+                <Button
+                    style="@style/button"
+                    android:onClick="ordersFromStatue"
+                    android:layout_width="match_parent"
+                    android:text="@string/get_order"
+                    android:layout_height="wrap_content" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/hr_height"
+                    android:background="@color/colorHR" />
+
+                <TextView
+                    style="@style/input_pre"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/get_from_order_id" />
+
+                <EditText
+                    android:id="@+id/etOrder"
+                    style="@style/input_obj"
+                    android:inputType="number"
+                    android:layout_width="match_parent"
+                    android:entries="@array/order_status"
+                    android:layout_height="wrap_content" />
+
+                <Button
+                    style="@style/button"
+                    android:onClick="orderFromId"
+                    android:layout_width="match_parent"
+                    android:text="@string/get_order"
+                    android:layout_height="wrap_content" />
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/hr_height"
+                    android:background="@color/colorHR" />
+
+                <TextView
+                    style="@style/input_pre"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/set_statue" />
+
+                <Spinner
+                    android:id="@+id/spinOrderSetStatus"
+                    android:layout_width="match_parent"
+                    android:entries="@array/order_status"
+                    android:layout_height="wrap_content" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/hr_height"
+                    android:background="@color/colorHR" />
+
+                <LinearLayout
+                    android:id="@+id/llAPList"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"></LinearLayout>
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
