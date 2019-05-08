@@ -57,6 +57,81 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/panelNewPassword"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="60dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pre_forgot_pin" />
+
+        <EditText
+            android:id="@+id/etPIN"
+            style="@style/input_obj"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_forgot_pin"
+            android:inputType="number" />
+
+        <TextView
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pre_register_password" />
+
+        <EditText
+            android:id="@+id/etRegisterForgotPassword"
+            style="@style/input_obj"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_register_password"
+            android:inputType="textPassword" />
+
+        <TextView
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pre_register_password_repeat" />
+
+        <EditText
+            android:id="@+id/etRegisterForgotPasswordRepeat"
+            style="@style/input_obj"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_register_password_repeat"
+            android:inputType="textPassword" />
+
+        <Button
+            style="@style/button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="sendNewPassword"
+            android:text="@string/send_new_password" />
+        <TextView
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="alreadyMember"
+            android:text="@string/remember_password"
+            android:textSize="16sp" />
+
+        <TextView
+            style="@style/input_pre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="notAlreadyMember"
+            android:text="@string/not_already_member"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/panelLogin"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

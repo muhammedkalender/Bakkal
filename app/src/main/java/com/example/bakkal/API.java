@@ -520,7 +520,29 @@ public class API {
 
             params.put("user_id", String.valueOf(userNo));
 
-           return Functions.getData(params);
+            return Functions.getData(params);
+        }
+
+        public static Functions.WebResult getPIN(String email) {
+            HashMap<String, String> params = new HashMap<>();
+            params.put("req", "forgot_request");
+            params.put("cat", "user");
+
+            params.put("user_email", email);
+
+            return Functions.getData(params);
+        }
+
+        public static Functions.WebResult newPassword(String userEmail, String pin, String password) {
+            HashMap<String, String> params = new HashMap<>();
+            params.put("req", "forgot_password");
+            params.put("cat", "user");
+
+            params.put("user_email", userEmail);
+            params.put("user_password", password);
+            params.put("user_pin", pin);
+
+            return Functions.getData(params);
         }
     }
 }

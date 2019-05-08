@@ -57,8 +57,6 @@ function decode($data)
 
 function clear($data)
 {
-    //$string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
-    //Türkçe karakter ı da problem todo  ş dede vr sorun
     $allow = "abcçdefgğhıijklmnoöprsştuüwxyzqABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜWĞXYZQP-_ 1234567890@.,:;+";
 
     for ($j = 0; $j < count($data); $j++) {
@@ -99,6 +97,21 @@ function base64_to_jpeg($base64_string, $output_file)
 function generate($length)
 {
     $list = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $listLength = strlen($list);
+
+    $token = "";
+
+    for ($i = 0; $i < $length; $i++) {
+        $randomIndex = rand(0, $listLength - 1);
+        $token .= $list[$randomIndex];
+    }
+
+    return $token;
+}
+
+function generateNumber($length)
+{
+    $list = '0123456789';
     $listLength = strlen($list);
 
     $token = "";
@@ -153,7 +166,7 @@ function sendOrderEmail($orderId)
 
             $item = $stmt->fetch();
 
-            $html .= "<tr><td>".$item["product_brand"]." ".$item["product_name"]."</td><td>".$item["product_price"]."</td><td>".$orderItems[$i]["item_count"]."</td><td>".($orderItems[$i]["item_count"]*$item["product_price"])." ₺</td></tr>";
+            $html .= "<tr><td>" . $item["product_brand"] . " " . $item["product_name"] . "</td><td>" . $item["product_price"] . "</td><td>" . $orderItems[$i]["item_count"] . "</td><td>" . ($orderItems[$i]["item_count"] * $item["product_price"]) . " ₺</td></tr>";
         }
 
 
@@ -172,6 +185,32 @@ function sendOrderEmail($orderId)
         $mail->AddAddress($orderUser["user_email"], $orderUser["user_name"] . " " . $orderUser["user_surname"]);
         $mail->CharSet = 'UTF-8';
         $mail->Subject = 'Siparişiniz Tamamlandı';
+        $content = $html;
+        $mail->MsgHTML($content);
+        return $mail->Send();
+    } catch (Exception $e) {
+        return false;
+    }
+}
+
+function sendForgotPIN($email, $name, $pin)
+{
+    try {
+        $html = "<html>Şifreyi Kurtarmak İçin PINi Kullanın<br><b>" . $pin . "</b></html>";
+
+        include 'class.phpmailer.php';
+        $mail = new PHPMailer();
+        $mail->IsSMTP();
+        $mail->SMTPAuth = true;
+        $mail->Host = 'smtp.gmail.com';
+        $mail->Port = 587;
+        $mail->SMTPSecure = 'tls';
+        $mail->Username = 'bakkal.gunes.eposta@gmail.com';
+        $mail->Password = '123456bakkal';
+        $mail->SetFrom($mail->Username, 'Güneş Bakkal');
+        $mail->AddAddress($email, $name);
+        $mail->CharSet = 'UTF-8';
+        $mail->Subject = 'Şifre Kurtarma Talebi';
         $content = $html;
         $mail->MsgHTML($content);
         return $mail->Send();
@@ -438,7 +477,7 @@ function req($req, $cat)
             if (intval($_POST["category"]) > 0) {
                 $where = " WHERE product_category = " . intval($_POST["category"]);
             } else if (clear($_POST["search"]) != "") {
-                $where = " WHERE product_name LIKE '%" . clear($_POST["search"]) . "%' OR product_brand = '%" . clear($_POST["search"]) . "%' OR product_desc = '%" . clear($_POST["search"]) . "%'";
+                $where = " WHERE product_name LIKE '%" . clear($_POST["search"]) . "%' OR product_brand LIKE '%" . clear($_POST["search"]) . "%' OR product_desc LIKE '%" . clear($_POST["search"]) . "%'";
             }
 
             $order = "";
@@ -604,10 +643,62 @@ function req($req, $cat)
                 return [false, "Kullanıcı Şifresi Güncellenemselectedi"];
             }
         } else if ($req == "forgot_request") {
-            //todo
-        } else if ($req == "forgot_password") {
-            //todo
+            $result = arrayCheck([
+                ["user_email", "Eposta", 3, 32]
+            ]);
 
+            if (!$result[0]) {
+                return $result;
+            }
+
+            $stmt = $pdo->prepare("SELECT * FROM user WHERE user_email = '" . clear($_POST["user_email"]) . "'");
+
+            if (!$stmt->execute() || $stmt->rowCount() == 0) {
+                return [false, "Kullanıcı Bulunamadı"];
+            }
+
+            $stmt = $stmt->fetch();
+
+            $user = $stmt["user_id"];
+            $email = $stmt["user_email"];
+            $name = $stmt["user_name"] . " " . $stmt["user_surname"];
+
+            $pin = generateNumber(8);
+
+            $stmt = $pdo->prepare("UPDATE user SET user_pin = " . $pin . " WHERE user_id = " . $user);
+
+            if ($stmt->execute()) {
+                if (sendForgotPIN($email, $name, $pin)) {
+                    return [true, "Şifre Kurtarma PIN'i Yollandı"];
+                }
+
+                return [false, "Şifre Kurtarma Başlatılamadı"];
+            } else {
+                return [false, "Şifre Kurtarma Başlatılamadı"];
+            }
+
+        } else if ($req == "forgot_password") {
+            $result = arrayCheck([
+                ["user_email", "Eposta", 3, 32],
+                ["user_pin", "PIN", 8, 12],
+                ["user_password", "Şifre", 3, 32]
+            ]);
+
+            if (!$result[0]) {
+                return $result;
+            }
+
+            $stmt = $pdo->prepare("UPDATE user SET user_password = '" . sha1($_POST["user_password"]) . "', user_pin = 0 WHERE user_pin = " . intval($_POST["user_pin"]) . " AND user_email = '" . clear($_POST["user_email"]) . "'");
+
+            if ($stmt->execute()) {
+                if ($stmt->rowCount() > 0) {
+                    return [true, "Şifre Başarıyla Değiştirildi"];
+                } else {
+                    return [false, "PIN Doğru Değil"];
+                }
+            } else {
+                return [false, "Şifre Değiştirilirken Sorun oluştu"];
+            }
         } else {
             return [false, "İstek Düzğün Değil"];
         }
@@ -698,7 +789,7 @@ function req($req, $cat)
 
             if (intval($_POST["status"]) > -1) {
                 if ($where == "") {
-                    $where = "WHERE order_status = " . intval($_POST["status"]);
+                    $where = " WHERE order_status = " . intval($_POST["status"]);
                 } else {
                     $where .= " AND order_status = " . intval($_POST["status"]);
                 }
@@ -763,10 +854,10 @@ function req($req, $cat)
 
             if ($stmt->execute()) {
                 if (intval($_POST["order_status"]) == 3) {
-                    if(sendOrderEmail(intval($_POST["order_id"]))){
-                        return[true, "Statü Güncellendi ve Eposta Gönderildi"];
-                    }else{
-                        return[true, "Statü Güncellendi Fakat Eposta Gönderilemedi"];
+                    if (sendOrderEmail(intval($_POST["order_id"]))) {
+                        return [true, "Statü Güncellendi ve Eposta Gönderildi"];
+                    } else {
+                        return [true, "Statü Güncellendi Fakat Eposta Gönderilemedi"];
                     }
                 }
 
@@ -934,9 +1025,12 @@ function req($req, $cat)
                     return [false, "Ürün Resmi Güncellenirken Sorunla Karşılaşıldı"];
                 }
             } else {
-                //todo
+                return [false, "Talep Doğru Değil"];
             }
         } else {
-            //todo
+            return [false, "Talep Doğru Değil"];
         }
+
+    return [false, "Talep Doğru Değil"];
+
 }

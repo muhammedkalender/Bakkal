@@ -21,7 +21,7 @@
     <string name="forgot_password">Şifrenizimi Unuttunuz ?</string>
     <string name="already_member">Zaten Üyemisiniz ?</string>
     <string name="not_already_member">Hesabınız Yok Mu ?</string>
-    <string name="i_wanna_try">Şifrenizi Hatırladınız Mı ?</string>
+    <string name="i_wanna_try">Şifrenizi Hatırlamadınız Mı ?</string>
     <string name="send_forgot_mail">Kurmatma E-Postası Gönder</string>
 
     <string name="pre_register_email">E-Posta Adresiniz</string>
@@ -147,7 +147,7 @@
     </string-array>
 
     <string name="user_info_title">Kullanıcı Bilgileri</string>
-    <string name="user_info">İsim Soyisim : %1$s %2$s\nTelefon : %3$s\nAdres : %4$s</string>
+    <string name="user_info">EPosta : %5$s\nİsim Soyisim : %1$s %2$s\nTelefon : %3$s\nAdres : %4$s</string>
     <string name="set_statue">Durumu Güncelle\n(Güncellemek için Yuvarlaklı Kutucuğa Tıkla)</string>
     <string name="set_statue_button">Güncelle</string>
     <string name="allow_stock">Geçerli Bir Değer Girmelisiniz</string>
@@ -158,4 +158,12 @@
     <string name="null_order_statue">İlgili Filtrelemede Sipariş Bulunamadı</string>
     <string name="cart_null">Sepet Boş</string>
     <string name="online">Bu uygulamayı kullanabilmek için internete bağlı olmanız gerekiyor</string>
+    <string name="send_new_password">Şifreyi Değiştir</string>
+    <string name="null_email">Lütfen Geçerli Bir Mail Girin</string>
+    <string name="password_match">Şifreler Uyuşmuyor</string>
+    <string name="null_password_repeat">Şifre Tekrarı Boş Olamaz</string>
+    <string name="null_pin">PIN Boş Olamaz</string>
+    <string name="pre_forgot_pin">PIN\n(Eposta Adresinize Gönderildi)</string>
+    <string name="hint_forgot_pin">12312312</string>
+    <string name="remember_password">Şifrenizi Hatırladınızmı ?</string>
 </resources>

@@ -567,7 +567,7 @@ public class ControlPanel extends AppCompatActivity {
     }
 
     public static void ordersFromStatue(View view) {
-        ArrayList<CommonObjects.Order> objs = API.Order.select(spinnerStatue.getSelectedItemPosition(), 0, 0);
+        ArrayList<CommonObjects.Order> objs = API.Order.select(spinnerStatue.getSelectedItemPosition(), 0, 0,true);
 
         llOrderlist.removeAllViews();
 

@@ -300,7 +300,7 @@ public class CommonObjects {
 
                     JSONObject usr = result.getRaw().getJSONArray(2).getJSONObject(0);
 
-                    String message = ControlPanel.context.getString(R.string.user_info, usr.getString("user_name"), usr.getString("user_surname"), usr.getString("user_phone"), usr.getString("user_address"));
+                    String message = ControlPanel.context.getString(R.string.user_info, usr.getString("user_name"), usr.getString("user_surname"), usr.getString("user_phone"), usr.getString("user_address"), usr.getString("user_email"));
 
                     Functions.message(ControlPanel.context, ControlPanel.context.getString(R.string.user_info_title), message, false);
                 } else {
