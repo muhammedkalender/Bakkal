@@ -149,12 +149,10 @@ public class ControlPanel extends AppCompatActivity {
                         etCategory.setText(categories[position].getCategoryName());
                         //Functions.loadImage(ivCategory, categories.get(position).getCategoryImage());
                         selectedCategoryPosition = position;
-                        Toast.makeText(ControlPanel.this, position + "", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onNothingSelected(AdapterView<?> parent) {
-                        Toast.makeText(ControlPanel.this, "boşş", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -166,11 +164,8 @@ public class ControlPanel extends AppCompatActivity {
             }
 
             svMenu.setVisibility(View.INVISIBLE);
-            Log.e("asda", "xx7771");
 
             llCategory.setVisibility(View.VISIBLE);
-            Log.e("asda", "999xx1");
-
         } catch (Exception e) {
             Functions.Track.error("AP-CAT", e);
         }
@@ -179,7 +174,7 @@ public class ControlPanel extends AppCompatActivity {
     public void addCategory(View view) {
         if (etCategory.getText() != null && etCategory.getText().toString().equals("") == false) {
             Functions.WebResult result = API.Category.insert(0, etCategory.getText().toString(), "", "");
-            Log.e("asdds", etCategory.getText().toString() + "aa");
+
             if (result.isConnected() && result.isSuccess()) {
                 loadCategory(null);
 
@@ -256,8 +251,6 @@ public class ControlPanel extends AppCompatActivity {
                 spinnerProductCategory.setSelection(findPosition(x.getProductCategory()));
 
                 ((Button) findViewById(R.id.btnDeleteProduct)).setTag(x.getId());
-
-                Log.e("asdsadasd", findPosition(x.getProductCategory()) + "---" + x.getProductCategory());
 
                 productImageUrl = x.getProductImage();
                 currentProduct = x;
@@ -402,12 +395,10 @@ public class ControlPanel extends AppCompatActivity {
                     etCategory.setText(categories[position].getCategoryName());
                     //Functions.loadImage(ivCategory, categories.get(position).getCategoryImage());
                     selectedCategoryPosition = position;
-                    Toast.makeText(ControlPanel.this, position + "", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {
-                    Toast.makeText(ControlPanel.this, "boşş", Toast.LENGTH_SHORT).show();
                 }
             });
         }
