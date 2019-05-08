@@ -433,15 +433,15 @@ public class MainMenu extends AppCompatActivity
         btnCartConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                v.setClickable(false);
                 completeOrder(v);
+                v.setClickable(true);
             }
         });
 
         listenerOrderItem = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e("asdasd", "asasdas");
-
                 CommonObjects.Product obj = (CommonObjects.Product) v.getTag();
 
                 viewProduct(obj);

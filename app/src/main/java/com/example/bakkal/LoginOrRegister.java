@@ -66,6 +66,7 @@ public class LoginOrRegister extends AppCompatActivity {
     }
 
     public void register(View view) {
+        view.setClickable(false);
         Functions.WebResult result = MainMenu.user.register(getValue(R.id.etRegisterName), getValue(R.id.etRegisterSurName), getValue(R.id.etRegisterEmail), getValue(R.id.etRegisterPassword), getValue(R.id.etRegisterPasswordRepeat), getValue(R.id.etRegisterAddress), getValue(R.id.etRegisterPhone));
 
         if (result.isConnected()) {
@@ -82,9 +83,11 @@ public class LoginOrRegister extends AppCompatActivity {
         } else {
             Functions.message(this, "", getString(R.string.connection_error), true);
         }
+        view.setClickable(true);
     }
 
     public void login(View view) {
+        view.setClickable(false);
         String email = ((EditText) findViewById(R.id.etLoginEmail)).getText().toString();
         String password = ((EditText) findViewById(R.id.etLoginPassword)).getText().toString();
 
@@ -107,6 +110,7 @@ public class LoginOrRegister extends AppCompatActivity {
         } else {
             Functions.message(this, "", getResources().getString(R.string.null_email_or_password), true);
         }
+        view.setClickable(true);
     }
 
     public void notAlreadyMember(View view) {
@@ -121,6 +125,7 @@ public class LoginOrRegister extends AppCompatActivity {
     }
 
     public void sendForgotMail(View view) {
+        view.setClickable(false);
         final EditText email = findViewById(R.id.etForgotPasswordEmail);
 
         if (email != null && email.getText() != null && email.getText().toString().equals("") == false) {
@@ -142,6 +147,8 @@ public class LoginOrRegister extends AppCompatActivity {
         } else {
             Functions.message(this, "", getString(R.string.null_email), true);
         }
+
+        view.setClickable(true);
     }
 
     public String getValue(int id) {
@@ -157,8 +164,11 @@ public class LoginOrRegister extends AppCompatActivity {
     }
 
     public void sendNewPassword(View view) {
-        if (userEmail.equals("")) {
+        view.setClickable(false);
 
+        if (userEmail.equals("")) {
+            Functions.message(this, "", getString(R.string.null_email), true);
+            return;
         }
 
         EditText etPIN = findViewById(R.id.etPIN);
@@ -167,18 +177,21 @@ public class LoginOrRegister extends AppCompatActivity {
 
         if (etPIN == null || etPIN.getText() == null) {
             Functions.message(this, "", getString(R.string.null_pin), true);
+            view.setClickable(true);
             return;
         }
 
 
         if (etPassword == null || etPassword.getText() == null) {
             Functions.message(this, "", getString(R.string.null_password), true);
+            view.setClickable(true);
             return;
         }
 
 
         if (etPasswordRepeat == null || etPasswordRepeat.getText() == null) {
             Functions.message(this, "", getString(R.string.null_password_repeat), true);
+            view.setClickable(true);
             return;
         }
 
@@ -186,6 +199,7 @@ public class LoginOrRegister extends AppCompatActivity {
 
         if (password.equals(etPasswordRepeat.getText().toString()) == false) {
             Functions.message(this, "", getString(R.string.password_match), true);
+            view.setClickable(true);
             return;
         }
 
@@ -203,5 +217,7 @@ public class LoginOrRegister extends AppCompatActivity {
         } else {
             Functions.message(this, "", result.getData(), true);
         }
+
+        view.setClickable(true);
     }
 }

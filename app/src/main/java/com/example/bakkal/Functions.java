@@ -46,7 +46,7 @@ import javax.net.ssl.HttpsURLConnection;
 import static android.content.Context.MODE_PRIVATE;
 
 public class Functions {
-    public static final String BASE_URL = "http://192.168.64.2/";
+    public static final String BASE_URL = "http://192.168.1.8/";
     public static Context CONTEXT = null;
     public static DecimalFormat decimalFormat = new DecimalFormat("#.##");
 
