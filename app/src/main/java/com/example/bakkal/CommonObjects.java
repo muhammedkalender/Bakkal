@@ -328,7 +328,6 @@ public class CommonObjects {
         }
 
         public void setOrderItems(ArrayList<CommonObjects.OrderItem> orderItems) {
-            Log.e("asdasd", orderItems.size() + "boyutl");
             this.orderItems = orderItems;
         }
 

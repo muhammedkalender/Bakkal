@@ -90,18 +90,18 @@
             android:layout_height="wrap_content"
             android:hint="@string/hint_category_name" />
 
-        <TextView
-            style="@style/input_pre"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/pre_category_image" />
+        <!--  <TextView
+             style="@style/input_pre"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:text="@string/pre_category_image" />
 
-        <!--  <ImageView
-              android:id="@+id/ivCategoryImage"
-              android:layout_width="match_parent"
-              android:layout_height="120dp"
-              android:scaleType="fitCenter" />
-  -->
+          <ImageView
+               android:id="@+id/ivCategoryImage"
+               android:layout_width="match_parent"
+               android:layout_height="120dp"
+               android:scaleType="fitCenter" />
+   -->
         <Button
             style="@style/button"
 
